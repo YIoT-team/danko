@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #  ────────────────────────────────────────────────────────────
 #                     ╔╗  ╔╗ ╔══╗      ╔════╗
 #                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
@@ -17,39 +19,69 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-#
-#   CentOS 8.4
-#
-FROM centos:centos8.4.2105
+set -e
 
-LABEL maintainer="yiot" name="CV-2SE build" vendor="yiot" license="GPLv2" build-date="{{ BUILDDATE }}" version="{{ IMGVERS1 }}"
+SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
+
+ARM_CONF="CONFIG_TARGET_arm=y"
+if [ $(cat .config | grep "${ARM_CONF}") == "${ARM_CONF}" ]; then
+  CV2SE_CPU="raspberry-pi"
+else
+  CV2SE_CPU="x86_64"
+fi
+echo "========================"
+echo "CPU is ${CV2SE_CPU}"
+
+# Get start date/time
+START=$(date +%y-%m/%d-%H/%M/%S)
+
+# Update feeds
+./scripts/feeds update -a
+./scripts/feeds install -a -f
 
 #
-#   Time zone
+#   Copy prepared configuration
 #
-ENV TZ=Europe/Sofia
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+copy_configuration() {
+   local PARAM_CONFIG="${1}"
+   echo "--- Copy [${CV2SE_CPU}/${PARAM_CONFIG}] -> .config"
+   cp -f "/yiot-ci/ci/configs/${CV2SE_CPU}/${PARAM_CONFIG}.config" "${SCRIPT_PATH}/.config"
+   if [ "${?}" != "0" ]; then
+     echo "Error copy configuration or file not found !"
+     exit 127
+   fi
+}
+
+if [ -z "${1}" ]; then
+    copy_configuration "cv-2se"
+else
+    copy_configuration ${1}
+fi
 
 #
-#   Install packages
+#   Fix configuration
 #
+make defconfig
 
-RUN cd /etc/yum.repos.d/ && \
-    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* &&\
-    yum clean all &&\
-    yum -y update &&\
-    yum -y install epel-release &&\
-    yum -y install asciidoc autoconf automake bash binutils bison bzip2 cmake ccache curl-devel diffutils dos2unix expat-devel \
-           findutils flex gawk gcc gcc-c++ gettext git glibc-headers gmp-devel intltool kernel-devel kernel-headers lcov \
-           libcurl-devel libmpc-devel libtool libusb libxml2-devel make mpfr-devel ncurses-devel openssl \
-           openssl-devel patch patchutils perl-ExtUtils-MakeMaker subversion sudo unzip util-linux valgrind wget \
-           which zlib zlib-devel curl mercurial bubblewrap file mc rsync python3-distutils-extra glibc.i686 &&\
-    yum -y clean all
+NOW=$(date +%y%m%d-%H%M%S)
+make  download 2>&1
 
-#   Entrypoint
-#
-ADD entrypoint.sh /usr/local/bin/
-ADD started.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/started.sh /usr/local/bin/entrypoint.sh
-CMD ["/usr/local/bin/entrypoint.sh"]
+make ${2} 2>&1
+
+if [ "$?" = "0" ] ; then
+	echo "========================"
+	echo "BUILD SUCCESS!!!"
+	echo "========================"
+else
+	echo "========================"
+	echo "BUILD FAILED!!!"
+	echo "========================"
+	exit 1
+fi
+
+END=$(date +%y-%m/%d-%H/%M/%S)
+echo "========================"
+echo "BUILD START at $START !!"
+echo "FINISH at $END !!"
+echo "========================"
+

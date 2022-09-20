@@ -24,7 +24,6 @@ SCRIPT_PATH="$(cd $(dirname "$0") && pwd)"
 pushd "${SCRIPT_PATH}"
     . ./SETTINGS
 
-    docker login --username="${1}"
     [ $? -ne 0 ] && exit
 
     echo "Push images"

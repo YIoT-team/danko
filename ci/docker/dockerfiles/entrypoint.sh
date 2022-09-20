@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #  ────────────────────────────────────────────────────────────
 #                     ╔╗  ╔╗ ╔══╗      ╔════╗
 #                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
@@ -17,39 +19,17 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-#
-#   CentOS 8.4
-#
-FROM centos:centos8.4.2105
+if [ ! -f /initialized ]; then
+   if [ ! -z "$BUILD_UID" ] && [ ! -z "$BUILD_GID" ] && [ ! $(getent passwd jenkins) ] && [ "$BUILD_UID" != "0" ]; then
+      echo "------------------------------------------"
+      chown $BUILD_UID.$BUILD_GID /home/jenkins
+      echo "Add group Jenkins GID=[$BUILD_GID]"
+      groupadd -g "$BUILD_GID" jenkins
+      echo "Add user Jenkins UID=[$BUILD_UID]"
+      adduser -g $BUILD_GID -u $BUILD_UID jenkins
+      echo "------------------------------------------"
+   fi
+   touch /initialized
+fi
 
-LABEL maintainer="yiot" name="CV-2SE build" vendor="yiot" license="GPLv2" build-date="{{ BUILDDATE }}" version="{{ IMGVERS1 }}"
-
-#
-#   Time zone
-#
-ENV TZ=Europe/Sofia
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-#
-#   Install packages
-#
-
-RUN cd /etc/yum.repos.d/ && \
-    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* &&\
-    yum clean all &&\
-    yum -y update &&\
-    yum -y install epel-release &&\
-    yum -y install asciidoc autoconf automake bash binutils bison bzip2 cmake ccache curl-devel diffutils dos2unix expat-devel \
-           findutils flex gawk gcc gcc-c++ gettext git glibc-headers gmp-devel intltool kernel-devel kernel-headers lcov \
-           libcurl-devel libmpc-devel libtool libusb libxml2-devel make mpfr-devel ncurses-devel openssl \
-           openssl-devel patch patchutils perl-ExtUtils-MakeMaker subversion sudo unzip util-linux valgrind wget \
-           which zlib zlib-devel curl mercurial bubblewrap file mc rsync python3-distutils-extra glibc.i686 &&\
-    yum -y clean all
-
-#   Entrypoint
-#
-ADD entrypoint.sh /usr/local/bin/
-ADD started.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/started.sh /usr/local/bin/entrypoint.sh
-CMD ["/usr/local/bin/entrypoint.sh"]
+while true;do  sleep 10; done

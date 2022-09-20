@@ -106,7 +106,7 @@ check_not_empty() {
 
 # -----------------------------------------------------------------------------
 
-PARAM_COMMAND="${1,,}"
+PARAM_COMMAND="${1}"
 if [ "${PARAM_COMMAND}" == "" ] || [ "${PARAM_COMMAND}" == "help" ]; then
     print_usage
     exit 0
