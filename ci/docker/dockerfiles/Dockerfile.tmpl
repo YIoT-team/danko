@@ -1,0 +1,53 @@
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+#  ────────────────────────────────────────────────────────────
+
+#
+#   Fedora 36
+#
+FROM fedora:36
+
+LABEL maintainer="yiot" name="CV-2SE build" vendor="yiot" license="GPLv2" build-date="{{ BUILDDATE }}" version="{{ IMGVERS1 }}"
+
+#
+#   Time zone
+#
+ENV TZ=Europe/Sofia
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+#
+#   Install packages
+#
+
+RUN dnf clean all &&\
+    dnf -y update &&\
+    dnf -y install asciidoc autoconf automake bash binutils bison bzip2 cmake cppcheck ccache curl-devel diffutils dos2unix expat-devel \
+           findutils flex gawk gcc gcc-c++ gettext git glibc-headers gmp-devel intltool kernel-devel kernel-headers lcov \
+           libcurl-devel libmpc-devel libtool libusb libusb-devel libxml2-devel make mpfr-devel ncurses-devel openssl \
+           openssl-devel patch patchutils perl-ExtUtils-MakeMaker subversion sudo texinfo unzip util-linux valgrind wget \
+           which zlib zlib-devel sharutils darcs curl mercurial bubblewrap file mc uboot-tools glibc.i686 &&\
+    dnf -y clean all
+
+#
+#   Entrypoint
+#
+ADD entrypoint.sh /usr/local/bin/
+ADD started.sh /usr/local/bin/
+ADD credential-helper.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/started.sh /usr/local/bin/entrypoint.sh
+CMD ["/usr/local/bin/entrypoint.sh"]
