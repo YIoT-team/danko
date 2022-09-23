@@ -14,7 +14,14 @@ RUSTC_HOST_ARCH:=$(HOST_ARCH)-unknown-linux-$(CONFIG_HOST_SUFFIX)
 RUSTC_TARGET_ARCH:=$(REAL_GNU_TARGET_NAME)
 CARGO_HOME:=$(STAGING_DIR_HOST)/.cargo
 LLVM_DIR:=$(STAGING_DIR_HOST)/llvm-rust
+
+# this is undefined for just x86_64
+ifeq ($(origin CPU_TYPE),undefined)
+RUSTC_CPU_TYPE:="generic"
+else
 RUSTC_CPU_TYPE=$(CPU_TYPE)
+endif
+
 RUSTFLAGS=
 $(warning CPU_TYPE is $(RUSTC_CPU_TYPE))
 
