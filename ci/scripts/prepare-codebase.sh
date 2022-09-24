@@ -50,6 +50,7 @@ prepare() {
     cp -rf ${OPENWRT_PATH}/* ./
 
     _h1 "Integrate Rust"
+    mkdir -p ./feeds/packages/lang/
     cp -rf ${RUST_PATH}/* ./feeds/packages/lang/
     
     popd
