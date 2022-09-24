@@ -30,7 +30,7 @@ source ${SCRIPT_PATH}/inc/helpers.sh
 CPU_TYPE="${1}"
 BASE_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 OPENWRT_PATH="${BASE_PATH}/ext/openwrt"
-RUST_PATH="${BASE_PATH}/ext/lang"
+FEEDS_PATH="${BASE_PATH}/yiot/override/feeds.conf"
 BUILD_PATH="${BASE_PATH}/build-${CPU_TYPE}"
 
 # -----------------------------------------------------------------------------
@@ -48,6 +48,9 @@ prepare() {
 
     _h1 "Copy OpenWRT"
     cp -rf ${OPENWRT_PATH}/* ./
+
+    _h1 "Copy Feeds configuration"
+    cp -rf ${FEEDS_PATH} ./
     
     popd
 
