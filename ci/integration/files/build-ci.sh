@@ -39,6 +39,9 @@ START=$(date +%y-%m/%d-%H/%M/%S)
 ./scripts/feeds update -a
 ./scripts/feeds install -a -f
 
+# "Integrate Rust"
+cp -rf /yiot-ci/ext/lang/* /yiot-base/feeds/packages/lang/
+
 #
 #   Copy prepared configuration
 #
