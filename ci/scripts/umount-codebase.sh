@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #  ────────────────────────────────────────────────────────────
 #                     ╔╗  ╔╗ ╔══╗      ╔════╗
 #                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
@@ -17,36 +19,25 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-export PATH=${PATH}:${CV2SE_PATH}/staging_dir/host/bin
+trap do_exit INT
 
-export CV2SE_ARTIFACTS_PATH
+set -e
 
-if [ "${PARAM_WITH_DEBUG}" == "1" ]; then
-  BUILD_PARAM="V=s -j1"
-else
-  BUILD_PARAM="-j10"
+SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
+source "${SCRIPT_PATH}/../docker/SETTINGS"
+source ${SCRIPT_PATH}/inc/helpers.sh
+
+BASE_PATH="$(realpath ${SCRIPT_PATH}/../..)"
+BUILD_PATH=""
+
+[ -d "${BASE_PATH}/build-x86_64" ] && BUILD_PATH="${BASE_PATH}/build-x86_64"
+[ -d "${BASE_PATH}/build-raspberry-pi" ] && BUILD_PATH="${BASE_PATH}/build-raspberry-pi"
+[ -d "${BASE_PATH}/build-" ] && BUILD_PATH="${BASE_PATH}/build-"
+
+if [ "${BUILD_PATH}" == "" ]; then
+  exit 0
 fi
 
-pushd ${CV2SE_PATH}
-INTERNAL_BUILDNO="1"
-if [ "${PARAM_WITH_CLEAN}" == "1" ]; then
-  local STAGE_NAME="Clean sources"
-  _start "${STAGE_NAME}"
-  make distclean
-  _finish "${STAGE_NAME}"
-fi
-
-local STAGE_NAME="Building images"
-_start "${STAGE_NAME}"
-./build-ci.sh "${PARAM_OPENWRT_CONFIGURATION}" "${BUILD_PARAM}"
-_finish "${STAGE_NAME}"
-
-local STAGE_NAME="Archiving artifacts"
-mkdir -p ${CV2SE_ARTIFACTS_PATH}
-_start "${STAGE_NAME}"
-
-cp -f ${CV2SE_PATH}/common/build/bin/* ${CV2SE_ARTIFACTS_PATH}/
-
-cp -f ${CV2SE_PATH}/* ${CV2SE_ARTIFACTS_PATH}/
-_finish "${STAGE_NAME}"
-popd
+sudo umount -l ${BUILD_PATH}/package 2>&1 > /dev/null || true
+sudo umount -l ${BUILD_PATH}/target  2>&1 > /dev/null || true
+sudo umount -l ${BUILD_PATH}/files  2>&1 > /dev/null || true

@@ -184,13 +184,6 @@ docker_exec() {
 }
 
 # -----------------------------------------------------------------------------
-docker_prepare_sources() {
-    _h1 "Link YIoT sources"
-    local YIOT_SRC="/yiot-base/package/yiot"
-    docker_exec "rm -rf ${YIOT_SRC}; mkdir -p ${YIOT_SRC}; ln -s /cv2se-yiot/* ${YIOT_SRC}/" || do_exit 127
-}
-
-# -----------------------------------------------------------------------------
 docker_run() {
     _h1 "Run container"
 
@@ -208,7 +201,6 @@ docker_run() {
     -v ${CI_PATH}:/yiot-ci \
     -v ${CV2SE_ARTIFACTS_PATH}:/build-artifacts \
     -v ${CV2SE_PATH}:/yiot-base \
-    -v ${YIOT_SRC_DIR}:/cv2se-yiot \
     -v ${CCACHE_DIR}:/home/${DOCKER_USER}/.ccache \
     ${DOCKER_BASE_IMAGE}
     if [ "${?}" != "0" ]; then
@@ -217,8 +209,6 @@ docker_run() {
     fi
     _h1 "Waiting container started"
     sudo docker exec --tty ${DOCKER_CONTAINER_NAME} /bin/bash -c ". /etc/bashrc; /usr/local/bin/started.sh" || do_exit 127
-    
-    docker_prepare_sources
 
    _log "OK"
    return 0

@@ -32,6 +32,7 @@ BASE_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 OPENWRT_PATH="${BASE_PATH}/ext/openwrt"
 FEEDS_PATH="${BASE_PATH}/yiot/override/feeds.conf"
 BUILD_PATH="${BASE_PATH}/build-${CPU_TYPE}"
+OVERLAY_TMP="${BASE_PATH}/ovtmp_${CPU_TYPE}"
 
 # -----------------------------------------------------------------------------
 do_exit() {
@@ -40,20 +41,48 @@ do_exit() {
 
 # -----------------------------------------------------------------------------
 prepare() {
-    _title "Prepare project to build for ${CPU_TYPE}"
+  _title "Prepare project to build for ${CPU_TYPE}"
 
-    _new_dir "${BUILD_PATH}"
+  _new_dir "${BUILD_PATH}"
 
-    pushd "${BUILD_PATH}"
+  pushd "${BUILD_PATH}"
 
-    _h1 "Copy OpenWRT"
-    cp -rf ${OPENWRT_PATH}/* ./
+  _h1 "Copy OpenWRT"
+  cp -rf ${OPENWRT_PATH}/* ./
 
-    _h1 "Copy Feeds configuration"
-    cp -rf ${FEEDS_PATH} ./
-    
-    popd
+  _h1 "Copy Feeds configuration"
+  cp -rf ${FEEDS_PATH} ./
 
+  popd
+
+}
+
+# -----------------------------------------------------------------------------
+prepare_overlay_one() {
+  _h1 "Prepare overlayfs directory ${1}"
+  mkdir -p ${OVERLAY_TMP}/work_${1}
+  mv -f ${OPENWRT_PATH}/${1} ${OVERLAY_TMP}
+  mkdir -p ${OPENWRT_PATH}/${1}
+}
+
+# -----------------------------------------------------------------------------
+prepare_overlay() {
+  prepare_overlay_one package
+  prepare_overlay_one target
+  prepare_overlay_one files
+}
+
+# -----------------------------------------------------------------------------
+mount_overlay_one() {
+  _h1 "Mounting overlayfs ${1}"
+  mountpoint -q ${OPENWRT_PATH}/${1} || sudo mount -t overlay overlay -o lowerdir=${OVERLAY_TMP}/${1},upperdir=${YIOT_SRC_DIR}/override/${1},workdir=${OVERLAY_TMP}/work_${1} ${OPENWRT_PATH}/${1}
+}
+
+# -----------------------------------------------------------------------------
+mount_overlay() {
+  mount_overlay_one package
+  mount_overlay_one target
+  mount_overlay_one files
 }
 
 # -----------------------------------------------------------------------------
@@ -61,5 +90,11 @@ prepare() {
 _new_dir "${BUILD_PATH}"
 
 prepare
+
+if [ ! -d ${OVERLAY_TMP} ]; then
+  prepare_overlay
+fi
+
+mount_overlay
 
 # -----------------------------------------------------------------------------
