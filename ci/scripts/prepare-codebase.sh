@@ -27,6 +27,9 @@ SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
 source "${SCRIPT_PATH}/../docker/SETTINGS"
 source ${SCRIPT_PATH}/inc/helpers.sh
 
+CI_PATH="$(realpath ${SCRIPT_PATH}/../..)"
+YIOT_SRC_DIR="${CI_PATH}/yiot"
+
 CPU_TYPE="${1}"
 BASE_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 OPENWRT_PATH="${BASE_PATH}/ext/openwrt"
@@ -69,20 +72,30 @@ prepare_overlay_one() {
 prepare_overlay() {
   prepare_overlay_one package
   prepare_overlay_one target
-  prepare_overlay_one files
+  # prepare_overlay_one files
 }
 
 # -----------------------------------------------------------------------------
 mount_overlay_one() {
   _h1 "Mounting overlayfs ${1}"
-  mountpoint -q ${OPENWRT_PATH}/${1} || sudo mount -t overlay overlay -o lowerdir=${OVERLAY_TMP}/${1},upperdir=${YIOT_SRC_DIR}/override/${1},workdir=${OVERLAY_TMP}/work_${1} ${OPENWRT_PATH}/${1}
+
+  LOWER_DIR=${OVERLAY_TMP}/${1}
+  UPPER_DIR=${YIOT_SRC_DIR}/override/${1}
+  WORK_DIR=${OVERLAY_TMP}/work_${1}
+
+  echo "point    :  ${BUILD_PATH}/${1}"
+  echo "lowerdir :  ${LOWER_DIR}"
+  echo "upperdir :  ${UPPER_DIR}"
+  echo "workdir  :  ${WORK_DIR}"
+
+  mountpoint -q ${BUILD_PATH}/${1} || sudo mount -t overlay overlay -o lowerdir=${LOWER_DIR},upperdir=${UPPER_DIR},workdir=${WORK_DIR} ${BUILD_PATH}/${1}
 }
 
 # -----------------------------------------------------------------------------
 mount_overlay() {
   mount_overlay_one package
   mount_overlay_one target
-  mount_overlay_one files
+  # mount_overlay_one files
 }
 
 # -----------------------------------------------------------------------------

@@ -40,4 +40,4 @@ fi
 
 sudo umount -l ${BUILD_PATH}/package 2>&1 > /dev/null || true
 sudo umount -l ${BUILD_PATH}/target  2>&1 > /dev/null || true
-sudo umount -l ${BUILD_PATH}/files  2>&1 > /dev/null || true
+# sudo umount -l ${BUILD_PATH}/files  2>&1 > /dev/null || true
