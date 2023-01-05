@@ -4,3 +4,6 @@
 [submodule "yiot/security/yiot"]
 	path = yiot/security/yiot
 	url = https://github.com/YIoT-team/yiot-openwrt.git
+[submodule "yiot/override/security/yiot"]
+	path = yiot/override/security/yiot
+	url = https://github.com/YIoT-team/yiot-openwrt.git
