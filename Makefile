@@ -34,12 +34,6 @@ rebuild_rpi:
 shell:
 	./ci/scripts/build-cv2se.sh shell
 
-prepare:
-	./ci/scripts/prepare-codebase.sh x86_64
-
-prepare_rpi:
-	./ci/scripts/prepare-codebase.sh raspberry-pi
-
 umount:
 	./ci/scripts/umount-codebase.sh
 

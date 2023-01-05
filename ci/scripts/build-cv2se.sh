@@ -29,6 +29,7 @@ source ${SCRIPT_PATH}/inc/helpers.sh
 
 CI_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 YIOT_SRC_DIR="${CI_PATH}/yiot"
+OPENWRT_PATH="${CI_PATH}/ext/openwrt"
 
 #   Docker
 DOCKER_BASE_IMAGE="${LIBRARY}/${IMAGENAME}:${IMGVERS1}"
@@ -39,9 +40,7 @@ PARAM_OPENWRT_CONFIGURATION="cv-2se"
 DOCKER_USER=$([ $(id -u) == '0' ] && echo "root" || echo "jenkins")
 
 PARAM_CPU="x86_64"
-CV2SE_PATH="${CI_PATH}/build-${PARAM_CPU}"
-CV2SE_ARTIFACTS_PATH="${CI_PATH}/build-${PARAM_CPU}/build-artifacts"
-DOCKER_CONTAINER_NAME="${IMAGENAME}_build_${JOB_NAME:-NONE}_${PARAM_CPU}_${BUILD_NUMBER:-0}"
+
 # -----------------------------------------------------------------------------
 print_usage() {
     echo
@@ -145,6 +144,13 @@ do
     shift
 done
 
+CV2SE_PATH="${CI_PATH}/build-${PARAM_CPU}"
+CV2SE_ARTIFACTS_PATH="${CI_PATH}/build-${PARAM_CPU}/build-artifacts"
+DOCKER_CONTAINER_NAME="${IMAGENAME}_build_${JOB_NAME:-NONE}_${PARAM_CPU}_${BUILD_NUMBER:-0}"
+
+OVERLAY_TMP="${CI_PATH}/ovtmp_${PARAM_CPU}"
+BUILD_PATH="${CI_PATH}/build-${PARAM_CPU}"
+
 # -----------------------------------------------------------------------------
 docker_check_privileges() {
     sudo docker ps 2>&1 >/dev/null
@@ -215,6 +221,44 @@ docker_run() {
 }
 
 # -----------------------------------------------------------------------------
+prepare_overlay_one() {
+  _h1 "Prepare overlayfs directory ${1}"
+  mkdir -p ${OVERLAY_TMP}/work_${1}
+  cp -R ${OPENWRT_PATH}/${1} ${OVERLAY_TMP}
+  mkdir -p ${OPENWRT_PATH}/${1}
+}
+
+# -----------------------------------------------------------------------------
+prepare_overlay() {
+  prepare_overlay_one package
+  prepare_overlay_one target
+  # prepare_overlay_one files
+}
+
+# -----------------------------------------------------------------------------
+mount_overlay_one() {
+  _h1 "Mounting overlayfs ${1}"
+
+  LOWER_DIR=${OVERLAY_TMP}/${1}
+  UPPER_DIR=${YIOT_SRC_DIR}/override/${1}
+  WORK_DIR=${OVERLAY_TMP}/work_${1}
+
+  echo "point    :  ${BUILD_PATH}/${1}"
+  echo "lowerdir :  ${LOWER_DIR}"
+  echo "upperdir :  ${UPPER_DIR}"
+  echo "workdir  :  ${WORK_DIR}"
+
+  mountpoint -q ${BUILD_PATH}/${1} || sudo mount -t overlay overlay -o lowerdir=${LOWER_DIR},upperdir=${UPPER_DIR},workdir=${WORK_DIR} ${BUILD_PATH}/${1}
+}
+
+# -----------------------------------------------------------------------------
+mount_overlay() {
+  mount_overlay_one package
+  mount_overlay_one target
+  # mount_overlay_one files
+}
+
+# -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 do_exit() {
@@ -242,8 +286,20 @@ do_build() {
     exit 127
   fi
 
-  _log "Prepare ci integration"
+  _start "Prepare ci integration"
   docker_exec "cp -f /yiot-ci/ci/integration/files/build-ci.sh /yiot-base/"         || do_exit 127
+
+  _start "Update feeds"
+  if [ ! -d "${BUILD_PATH}/feeds" ]; then
+    docker_exec "cd /yiot-base/ && ./scripts/feeds update -a"         || do_exit 127
+    docker_exec "cd /yiot-base/ && ./scripts/feeds install -a -f"     || do_exit 127
+  fi
+
+  _start "Prepare Overlay"  
+  if [ ! -d ${OVERLAY_TMP} ]; then
+    prepare_overlay
+  fi
+  mount_overlay
 
   _start "Building project"
   docker_exec "/yiot-ci/ci/scripts/internal-build.sh ${PARAM_COMMAND} ${PARAM_WITH_DEBUG} -a /build-artifacts -s /yiot-base -t ${PARAM_BUILD_PROFILE} -c ${PARAM_OPENWRT_CONFIGURATION}"

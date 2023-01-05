@@ -35,10 +35,6 @@ echo "CPU is ${CV2SE_CPU}"
 # Get start date/time
 START=$(date +%y-%m/%d-%H/%M/%S)
 
-# Update feeds
-./scripts/feeds update -a
-./scripts/feeds install -a -f
-
 #
 #   Copy prepared configuration
 #
