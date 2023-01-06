@@ -287,6 +287,7 @@ do_build() {
   fi
 
   _start "Prepare ci integration"
+  docker_exec "cp -f /yiot-ci/ci/configs/${PARAM_CPU}/${PARAM_OPENWRT_CONFIGURATION}.config /yiot-base/.config"  || do_exit 127
   docker_exec "cp -f /yiot-ci/ci/integration/files/build-ci.sh /yiot-base/"         || do_exit 127
 
   _start "Update feeds"
