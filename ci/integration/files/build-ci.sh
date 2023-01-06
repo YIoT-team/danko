@@ -23,7 +23,7 @@ set -e
 
 SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
 
-ARM_CONF="CONFIG_TARGET_arm=y"
+ARM_CONF="CONFIG_TARGET_bcm27xx=y"
 if [ $(cat .config | grep "${ARM_CONF}") == "${ARM_CONF}" ]; then
   CV2SE_CPU="raspberry-pi"
 else
