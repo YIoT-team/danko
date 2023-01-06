@@ -33,7 +33,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #
 #   Install packages
 #
-
 RUN cd /etc/yum.repos.d/ && \
     sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
     sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* &&\
@@ -46,10 +45,17 @@ RUN cd /etc/yum.repos.d/ && \
            findutils flex gawk gcc gcc-c++ gettext git glibc-headers gmp-devel intltool kernel-devel kernel-headers lcov \
            libcurl-devel libmpc-devel libtool libusb libxml2-devel make mpfr-devel ncurses-devel openssl \
            openssl-devel patch patchutils perl-ExtUtils-MakeMaker subversion sudo unzip util-linux valgrind wget \
-    which zlib zlib-devel curl mercurial bubblewrap file mc rsync python3 python3-distutils-extra genisoimage libstdc++-static &&\
-    qemu-img elfutils-libelf-devel &&\
+    which zlib zlib-devel curl mercurial bubblewrap file mc rsync python3 python3-distutils-extra genisoimage libstdc++-static \
+    qemu-img elfutils-libelf-devel && \
     yum -y clean all
 
+#
+#   Add Flutter
+#
+ADD flutter /usr/local/flutter
+
+
+#
 #   Entrypoint
 #
 ADD entrypoint.sh /usr/local/bin/

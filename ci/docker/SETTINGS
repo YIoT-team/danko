@@ -21,7 +21,7 @@
 
 # Image settings
 IMAGENAME="openwrt-cv2se-build-centos8"
-IMGVERS1="0.0.1"
+IMGVERS1="0.0.2"
 IMGVERS2="latest"
 
 # Registry settings
