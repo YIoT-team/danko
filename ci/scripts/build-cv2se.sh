@@ -279,6 +279,8 @@ do_shell() {
 
 # -----------------------------------------------------------------------------
 do_build() {
+  NEED_RESTART="false"
+
   _h1 "Building OpenWRT"
   docker_run
   if [ "${?}" != "0" ]; then
@@ -294,6 +296,8 @@ do_build() {
   if [ ! -d "${BUILD_PATH}/feeds" ]; then
     docker_exec "cd /yiot-base/ && ./scripts/feeds update -a"         || do_exit 127
     docker_exec "cd /yiot-base/ && ./scripts/feeds install -a -f"     || do_exit 127
+    docker_rm
+    NEED_RESTART="true"
   fi
 
   _start "Prepare Overlay"  
@@ -301,6 +305,10 @@ do_build() {
     prepare_overlay
   fi
   mount_overlay
+
+  if [ ${NEED_RESTART} == "true" ]; then
+    docker_run
+  fi
 
   _start "Building project"
   docker_exec "/yiot-ci/ci/scripts/internal-build.sh ${PARAM_COMMAND} ${PARAM_WITH_DEBUG} -a /build-artifacts -s /yiot-base -t ${PARAM_BUILD_PROFILE} -c ${PARAM_OPENWRT_CONFIGURATION}"
