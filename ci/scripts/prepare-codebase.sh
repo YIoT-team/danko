@@ -54,7 +54,7 @@ prepare() {
   cp -rf ${FEEDS_PATH} ./
 
   _h1 "Patch packages builder"
-  cp -rf ${FEEDS_PACKAGES_BUILDER_PATH} ./
+  cp -rf ${FEEDS_PACKAGES_BUILDER_PATH} ./include/
 
   popd
 

@@ -202,7 +202,7 @@ docker_run() {
     mkdir -p ${CCACHE_DIR}
     sudo docker run -d --rm --name "${DOCKER_CONTAINER_NAME}" \
     --privileged --sysctl=net.ipv6.conf.all.disable_ipv6=0 \
-    -u 0 \
+    -u 0 -e FORCE_UNSAFE_CONFIGURE=1 \
     -e BUILD_NUMBER="${BUILD_NUMBER}" -e CI_PIPELINE_ID="${CI_PIPELINE_ID}" \
     -v ${CI_PATH}:/yiot-ci \
     -v ${CV2SE_ARTIFACTS_PATH}:/build-artifacts \
@@ -298,6 +298,7 @@ do_build() {
     docker_exec "cd /yiot-base/ && ./scripts/feeds install -a -f"     || do_exit 127
     docker_rm
     NEED_RESTART="true"
+    cp -R -f "${BUILD_PATH}/package/feeds" ${OPENWRT_PATH}/package/
   fi
 
   _start "Prepare Overlay"  
