@@ -202,7 +202,7 @@ docker_run() {
     mkdir -p ${CCACHE_DIR}
     sudo docker run -d --rm --name "${DOCKER_CONTAINER_NAME}" \
     --privileged --sysctl=net.ipv6.conf.all.disable_ipv6=0 \
-    -e BUILD_UID="$(id -u)" -e BUILD_GID="$(id -g)" \
+    -u 0 \
     -e BUILD_NUMBER="${BUILD_NUMBER}" -e CI_PIPELINE_ID="${CI_PIPELINE_ID}" \
     -v ${CI_PATH}:/yiot-ci \
     -v ${CV2SE_ARTIFACTS_PATH}:/build-artifacts \

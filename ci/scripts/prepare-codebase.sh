@@ -31,6 +31,7 @@ CPU_TYPE="${1}"
 BASE_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 OPENWRT_PATH="${BASE_PATH}/ext/openwrt"
 FEEDS_PATH="${BASE_PATH}/yiot/override/feeds.conf"
+FEEDS_PACKAGES_BUILDER_PATH="${BASE_PATH}/yiot/override/package-ipkg.mk"
 BUILD_PATH="${BASE_PATH}/build-${CPU_TYPE}"
 
 # -----------------------------------------------------------------------------
@@ -51,6 +52,9 @@ prepare() {
 
   _h1 "Copy Feeds configuration"
   cp -rf ${FEEDS_PATH} ./
+
+  _h1 "Patch packages builder"
+  cp -rf ${FEEDS_PACKAGES_BUILDER_PATH} ./
 
   popd
 
