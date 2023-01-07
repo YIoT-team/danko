@@ -289,7 +289,6 @@ do_build() {
   fi
 
   _start "Prepare ci integration"
-  docker_exec "cp -f /yiot-ci/ci/configs/${PARAM_CPU}/${PARAM_OPENWRT_CONFIGURATION}.config /yiot-base/.config"  || do_exit 127
   docker_exec "cp -f /yiot-ci/ci/integration/files/build-ci.sh /yiot-base/"         || do_exit 127
 
   _start "Update feeds"
@@ -310,6 +309,9 @@ do_build() {
   if [ ${NEED_RESTART} == "true" ]; then
     docker_run
   fi
+
+  _start "Copy configuration file"
+  docker_exec "cp -f /yiot-ci/ci/configs/${PARAM_CPU}/${PARAM_OPENWRT_CONFIGURATION}.config /yiot-base/.config"  || do_exit 127
 
   _start "Building project"
   docker_exec "/yiot-ci/ci/scripts/internal-build.sh ${PARAM_COMMAND} ${PARAM_WITH_DEBUG} -a /build-artifacts -s /yiot-base -t ${PARAM_BUILD_PROFILE} -c ${PARAM_OPENWRT_CONFIGURATION}"

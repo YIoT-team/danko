@@ -45,8 +45,9 @@ local STAGE_NAME="Archiving artifacts"
 mkdir -p ${CV2SE_ARTIFACTS_PATH}
 _start "${STAGE_NAME}"
 
-cp -f ${CV2SE_PATH}/common/build/bin/* ${CV2SE_ARTIFACTS_PATH}/
+BIN_DIR="${CV2SE_PATH}/bin/targets/x86/64"
+cp -f ${BIN_DIR}/*.gz ${CV2SE_ARTIFACTS_PATH}/
+cp -f ${BIN_DIR}/*.iso ${CV2SE_ARTIFACTS_PATH}/
 
-cp -f ${CV2SE_PATH}/* ${CV2SE_ARTIFACTS_PATH}/
 _finish "${STAGE_NAME}"
 popd
