@@ -269,6 +269,13 @@ do_exit() {
 # -----------------------------------------------------------------------------
 do_shell() {
   _h1 "Runing container shell"
+  
+  _start "Prepare Overlay"  
+  if [ ! -d ${OVERLAY_TMP} ]; then
+    prepare_overlay
+  fi
+  mount_overlay
+
   docker_run
   if [ "${?}" != "0" ]; then
     exit 127

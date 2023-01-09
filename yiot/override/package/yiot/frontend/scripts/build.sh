@@ -29,6 +29,7 @@ rm -rf "${BUILD_PATH}"
 mkdir "${BUILD_PATH}"
 
 pushd "${PROJECT_PATH}/frontend"
+  export PATH=/usr/local/flutter/bin:${PATH}
   flutter build web --web-renderer canvaskit --release --dart-define yiot_env=prod
 popd
 
