@@ -25,11 +25,7 @@ PKG_RELEASE:=1
 PKG_LICENSE:=Apache-2.0 MIT
 PKG_LICENSE_FILES:=LICENSE-APACHE LICENSE-MIT
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2021-06-12
-PKG_SOURCE_VERSION:=245dd4b5b6ec3b99855b452b052d887171b76665
-PKG_SOURCE_URL:=https://github.com/neg2led/float_test.git
-PKG_MIRROR_HASH:=skip
+USE_SOURCE_DIR:=$(shell pwd)/src
 
 PKG_BUILD_DEPENDS:=rust/host
 
@@ -72,8 +68,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(REAL_GNU_TARGET_NAME)/release/float_test $(1)/bin/$(PKG_NAME)
-
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(REAL_GNU_TARGET_NAME)/release/cv2se $(1)/bin/$(PKG_NAME)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
