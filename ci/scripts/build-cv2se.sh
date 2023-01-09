@@ -325,7 +325,11 @@ do_build() {
   if [ "${PARAM_WITH_SHELL}" == "1" ]; then
      docker_shell
   fi
-  do_exit 0
+  docker_rm
+
+  "${SCRIPT_PATH}/create-vdi.sh"
+
+  exit 0
 }
 
 # -----------------------------------------------------------------------------
