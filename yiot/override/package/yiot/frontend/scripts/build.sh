@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #  ────────────────────────────────────────────────────────────
 #                     ╔╗  ╔╗ ╔══╗      ╔════╗
 #                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
@@ -14,46 +16,23 @@
 #                    ║║                         ║║
 #                    ╚╝                         ╚╝
 #
-#    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+#    Lead Maintainer: YIoT team
 #  ────────────────────────────────────────────────────────────
 
-include $(TOPDIR)/rules.mk
+set -e
 
-PKG_NAME:=cv2se-frontend
-PKG_VERSION:=0.0.1
-PKG_RELEASE:=$(SUBTARGET)
+SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
+PROJECT_PATH="${SCRIPT_PATH}/../"
+BUILD_PATH="${PROJECT_PATH}/files"
 
-USE_SOURCE_DIR:=$(shell pwd)/src
-PKG_LICENSE:=BSD-2
-PKG_LICENSE_FILES:=
+rm -rf "${BUILD_PATH}"
+mkdir "${BUILD_PATH}"
 
-include $(INCLUDE_DIR)/package.mk
+pushd "${PROJECT_PATH}/frontend"
+  flutter build web --web-renderer canvaskit --release --dart-define yiot_env=prod
+popd
 
-define Package/$(PKG_NAME)
-  SECTION:=yiot
-  CATEGORY:=YIoT Applications
-  TITLE:=YIoT Frontend
-  MAINTAINER:=Roman Kutashenko <kutashenko@gmail.com>
-endef
-
-define Package/$(PKG_NAME)/description
-YIoT CV-2se frontend
-endef
-
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)$(DEST_DIR)
-	$(INSTALL_DIR) $(1)$(DEST_DIR)/www/yiot
-  $(CP) ./files/* $(1)/www/yiot/
-endef
-
-
-$(eval $(call BuildPackage,$(PKG_NAME)))
+pushd "${BUILD_PATH}"
+  cp -rf ../frontend/build/web/* ${BUILD_PATH}/files/
+  cp -rf ../frontend/assets/* ${BUILD_PATH}/files/assets/
+popd
