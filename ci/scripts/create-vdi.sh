@@ -19,10 +19,6 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-set -e
-
-trap do_exit INT
-
 SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
 source "${SCRIPT_PATH}/../docker/SETTINGS"
 source ${SCRIPT_PATH}/inc/helpers.sh
