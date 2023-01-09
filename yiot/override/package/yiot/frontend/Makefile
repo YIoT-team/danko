@@ -37,7 +37,7 @@ define Package/$(PKG_NAME)
 endef
 
 define Package/$(PKG_NAME)/description
-YIoT CV-2se frontend
+  YIoT CV-2se frontend
 endef
 
 define Build/Prepare
@@ -50,10 +50,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)$(DEST_DIR)
-	$(INSTALL_DIR) $(1)$(DEST_DIR)/www/yiot
-  $(CP) ./files/* $(1)/www/yiot/
+	$(INSTALL_DIR) $(1)/www/yiot
+	$(CP) ./files/* $(1)/www/yiot/
 endef
-
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

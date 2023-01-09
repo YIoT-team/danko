@@ -317,6 +317,9 @@ do_build() {
     docker_run
   fi
 
+  _start "Build flutter frontend"
+  docker_exec "/yiot-base/package/yiot/frontend/scripts/build.sh"  || do_exit 127
+
   _start "Copy configuration file"
   docker_exec "cp -f /yiot-ci/ci/configs/${PARAM_CPU}/${PARAM_OPENWRT_CONFIGURATION}.config /yiot-base/.config"  || do_exit 127
 
