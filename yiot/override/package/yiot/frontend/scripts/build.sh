@@ -26,7 +26,7 @@ PROJECT_PATH="${SCRIPT_PATH}/../"
 BUILD_PATH="${PROJECT_PATH}/files"
 
 rm -rf "${BUILD_PATH}"
-mkdir "${BUILD_PATH}"
+mkdir -p "${BUILD_PATH}/assets/"
 
 pushd "${PROJECT_PATH}/frontend"
   export PATH=/usr/local/flutter/bin:${PATH}
@@ -34,6 +34,6 @@ pushd "${PROJECT_PATH}/frontend"
 popd
 
 pushd "${BUILD_PATH}"
-  cp -rf ../frontend/build/web/* ${BUILD_PATH}/files/
-  cp -rf ../frontend/assets/* ${BUILD_PATH}/files/assets/
+  cp -rf ../frontend/build/web/* ${BUILD_PATH}/
+  cp -rf ../frontend/assets/* ${BUILD_PATH}/assets/
 popd
