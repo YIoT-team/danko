@@ -30,6 +30,7 @@ mkdir -p "${BUILD_PATH}/assets/"
 
 pushd "${PROJECT_PATH}/frontend"
   export PATH=/usr/local/flutter/bin:${PATH}
+  rm -f pubspec.lock
   flutter build web --web-renderer canvaskit --release --dart-define yiot_env=prod
 popd
 
