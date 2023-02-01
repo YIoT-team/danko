@@ -50,8 +50,8 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/www/yiot
-	$(CP) ./files/* $(1)/www/yiot/
+	$(INSTALL_DIR) $(1)/www
+	$(CP) ./files/* $(1)/www/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
