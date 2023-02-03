@@ -25,6 +25,9 @@ abstract class RoutedWidgetInterface {
   // Route for widget
   String route();
 
+  // Icon for widget
+  IconData? icon();
+
   // Title for widget
   String title();
 }

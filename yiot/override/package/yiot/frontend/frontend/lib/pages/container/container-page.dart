@@ -18,10 +18,14 @@
 //  ────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import '../../routes/routed-widget.dart';
-import '../../widgets/navbar.dart';
-import '../../widgets/footer.dart';
-import '../../utils/responsive-layout.dart';
+import 'package:yiot_portal/theme/theme.dart';
+
+import 'package:flutter_admin_scaffold/admin_scaffold.dart';
+
+import 'package:yiot_portal/routes/routed-widget.dart';
+import 'package:yiot_portal/pages/container/main-menu.dart';
+
+import 'package:yiot_portal/components/ui/yiot-link-button.dart';
 
 class ContainerPage extends StatelessWidget implements RoutedWidgetInterface {
   ContainerPage({
@@ -40,39 +44,66 @@ class ContainerPage extends StatelessWidget implements RoutedWidgetInterface {
     return this.routeData;
   }
 
+  IconData? icon() {
+    return null;
+  }
+
   String title() {
     return "";
   }
 
   @override
   Widget build(BuildContext context) {
-    var content = <Widget>[
-      SizedBox(
-        height: 80.0,
-        child: NavBar(),
+    return AdminScaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text("YIoT CV-2SE"),
+        centerTitle: true,
       ),
-      Divider(
-        height: 1,
-        color: Colors.white,
+      sideBar: SideBar(
+        backgroundColor: YIoTTheme.backgroundColor,
+        activeBackgroundColor: Colors.black26,
+        borderColor: YIoTTheme.borderColor,
+        iconColor: YIoTTheme.iconColor,
+        activeIconColor: YIoTTheme.activeIconColor,
+        textStyle: TextStyle(
+          color: YIoTTheme.menuFontColor,
+          fontSize: YIoTTheme.fontH3(context),
+        ),
+        activeTextStyle: TextStyle(
+          color: Colors.white,
+          fontSize: YIoTTheme.fontH3(context),
+        ),
+        items: MainMenu.items,
+        selectedRoute: routeData,
+        onSelected: (item) {
+          if (item.route != null && item.route != routeData) {
+              Navigator.of(context).pushNamed(item.route!);
+          }
+        },
+        header: Container(
+          color: YIoTTheme.backgroundColor,
+          child: Column(
+            children: [
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: 100,
+                  maxWidth: 150,
+                ),
+                child: Image.asset(
+                  'assets/images/yiot.png',
+                ),
+              ),
+              Divider(
+                indent: 8.0,
+                endIndent: 8.0,
+              ),
+            ],
+          ),
+        ),
       ),
-      this.body,
-    ];
-
-    if (ModalRoute.of(context)?.settings.name == '/') {
-      content.add(
-        SizedBox(
-          height: ResponsiveLayout.fixGeometrySz(context, 50.0),
-          child: YIoTFooter(),
-        ),
-      );
-    }
-    return Container(
-      color: Colors.white,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(
-          children: content,
-        ),
+      body: SingleChildScrollView(
+        child: body,
       ),
     );
   }

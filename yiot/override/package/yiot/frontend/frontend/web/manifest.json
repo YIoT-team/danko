@@ -1,11 +1,11 @@
 {
-    "name": "Your IoT",
-    "short_name": "yiot",
+    "name": "YIoT Portal",
+    "short_name": "yiot_portal",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Your IoT",
+    "description": "YIoT Portal",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

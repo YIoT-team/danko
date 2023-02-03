@@ -19,7 +19,7 @@
 
 import 'dart:core';
 import 'package:flutter/material.dart';
-import './routed-widget.dart';
+import 'package:yiot_portal/routes/routed-widget.dart';
 
 class YIoTRoutes {
   // Routing widgets
@@ -59,15 +59,9 @@ class YIoTRoutes {
 
     if (page != null) {
       return PageRouteBuilder(
-        settings: settings,
-        pageBuilder: (_, __, ___) => page,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-      );
+          settings: settings,
+          pageBuilder: (_, __, ___) => page,
+    );
     }
 
     return null;
