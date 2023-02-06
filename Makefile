@@ -23,22 +23,19 @@ build:
 	./ci/scripts/build-cv2se.sh build
 
 build_rpi:
-	./ci/scripts/build-cv2se.sh build raspberry-pi
+	./ci/scripts/build-cv2se.sh build -q raspberry-pi
 
 rebuild:
 	./ci/scripts/build-cv2se.sh rebuild
 
 rebuild_rpi:
-	./ci/scripts/build-cv2se.sh rebuild raspberry-pi
+	./ci/scripts/build-cv2se.sh rebuild -q raspberry-pi
 
 shell:
 	./ci/scripts/build-cv2se.sh shell
 
-prepare:
-	./ci/scripts/prepare-codebase.sh x86_64
-
-prepare_rpi:
-	./ci/scripts/prepare-codebase.sh raspberry-pi
+shell_rpi:
+	./ci/scripts/build-cv2se.sh shell -q raspberry-pi
 
 umount:
 	./ci/scripts/umount-codebase.sh

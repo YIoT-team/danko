@@ -31,6 +31,7 @@ CPU_TYPE="${1}"
 BASE_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 OPENWRT_PATH="${BASE_PATH}/ext/openwrt"
 FEEDS_PATH="${BASE_PATH}/yiot/override/feeds.conf"
+FEEDS_PACKAGES_BUILDER_PATH="${BASE_PATH}/yiot/override/package-ipkg.mk"
 BUILD_PATH="${BASE_PATH}/build-${CPU_TYPE}"
 
 # -----------------------------------------------------------------------------
@@ -40,19 +41,22 @@ do_exit() {
 
 # -----------------------------------------------------------------------------
 prepare() {
-    _title "Prepare project to build for ${CPU_TYPE}"
+  _title "Prepare project to build for ${CPU_TYPE}"
 
-    _new_dir "${BUILD_PATH}"
+  _new_dir "${BUILD_PATH}"
 
-    pushd "${BUILD_PATH}"
+  pushd "${BUILD_PATH}"
 
-    _h1 "Copy OpenWRT"
-    cp -rf ${OPENWRT_PATH}/* ./
+  _h1 "Copy OpenWRT"
+  cp -rf ${OPENWRT_PATH}/* ./
 
-    _h1 "Copy Feeds configuration"
-    cp -rf ${FEEDS_PATH} ./
-    
-    popd
+  _h1 "Copy Feeds configuration"
+  cp -rf ${FEEDS_PATH} ./
+
+  _h1 "Patch packages builder"
+  cp -rf ${FEEDS_PACKAGES_BUILDER_PATH} ./include/
+
+  popd
 
 }
 
@@ -61,5 +65,6 @@ prepare() {
 _new_dir "${BUILD_PATH}"
 
 prepare
+
 
 # -----------------------------------------------------------------------------

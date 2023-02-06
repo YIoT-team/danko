@@ -29,6 +29,7 @@ source ${SCRIPT_PATH}/inc/helpers.sh
 
 CI_PATH="$(realpath ${SCRIPT_PATH}/../..)"
 YIOT_SRC_DIR="${CI_PATH}/yiot"
+OPENWRT_PATH="${CI_PATH}/ext/openwrt"
 
 #   Docker
 DOCKER_BASE_IMAGE="${LIBRARY}/${IMAGENAME}:${IMGVERS1}"
@@ -39,9 +40,7 @@ PARAM_OPENWRT_CONFIGURATION="cv-2se"
 DOCKER_USER=$([ $(id -u) == '0' ] && echo "root" || echo "jenkins")
 
 PARAM_CPU="x86_64"
-CV2SE_PATH="${CI_PATH}/build-${PARAM_CPU}"
-CV2SE_ARTIFACTS_PATH="${CI_PATH}/build-${PARAM_CPU}/build-artifacts"
-DOCKER_CONTAINER_NAME="${IMAGENAME}_build_${JOB_NAME:-NONE}_${PARAM_CPU}_${BUILD_NUMBER:-0}"
+
 # -----------------------------------------------------------------------------
 print_usage() {
     echo
@@ -145,6 +144,13 @@ do
     shift
 done
 
+CV2SE_PATH="${CI_PATH}/build-${PARAM_CPU}"
+CV2SE_ARTIFACTS_PATH="${CI_PATH}/build-${PARAM_CPU}/build-artifacts"
+DOCKER_CONTAINER_NAME="${IMAGENAME}_build_${JOB_NAME:-NONE}_${PARAM_CPU}_${BUILD_NUMBER:-0}"
+
+OVERLAY_TMP="${CI_PATH}/ovtmp_${PARAM_CPU}"
+BUILD_PATH="${CI_PATH}/build-${PARAM_CPU}"
+
 # -----------------------------------------------------------------------------
 docker_check_privileges() {
     sudo docker ps 2>&1 >/dev/null
@@ -184,13 +190,6 @@ docker_exec() {
 }
 
 # -----------------------------------------------------------------------------
-docker_prepare_sources() {
-    _h1 "Link YIoT sources"
-    local YIOT_SRC="/yiot-base/package/yiot"
-    docker_exec "rm -rf ${YIOT_SRC}; mkdir -p ${YIOT_SRC}; ln -s /cv2se-yiot/* ${YIOT_SRC}/" || do_exit 127
-}
-
-# -----------------------------------------------------------------------------
 docker_run() {
     _h1 "Run container"
 
@@ -203,12 +202,11 @@ docker_run() {
     mkdir -p ${CCACHE_DIR}
     sudo docker run -d --rm --name "${DOCKER_CONTAINER_NAME}" \
     --privileged --sysctl=net.ipv6.conf.all.disable_ipv6=0 \
-    -e BUILD_UID="$(id -u)" -e BUILD_GID="$(id -g)" \
+    -u 0 -e FORCE_UNSAFE_CONFIGURE=1 \
     -e BUILD_NUMBER="${BUILD_NUMBER}" -e CI_PIPELINE_ID="${CI_PIPELINE_ID}" \
     -v ${CI_PATH}:/yiot-ci \
     -v ${CV2SE_ARTIFACTS_PATH}:/build-artifacts \
     -v ${CV2SE_PATH}:/yiot-base \
-    -v ${YIOT_SRC_DIR}:/cv2se-yiot \
     -v ${CCACHE_DIR}:/home/${DOCKER_USER}/.ccache \
     ${DOCKER_BASE_IMAGE}
     if [ "${?}" != "0" ]; then
@@ -217,11 +215,47 @@ docker_run() {
     fi
     _h1 "Waiting container started"
     sudo docker exec --tty ${DOCKER_CONTAINER_NAME} /bin/bash -c ". /etc/bashrc; /usr/local/bin/started.sh" || do_exit 127
-    
-    docker_prepare_sources
 
    _log "OK"
    return 0
+}
+
+# -----------------------------------------------------------------------------
+prepare_overlay_one() {
+  _h1 "Prepare overlayfs directory ${1}"
+  mkdir -p ${OVERLAY_TMP}/work_${1}
+  cp -R ${OPENWRT_PATH}/${1} ${OVERLAY_TMP}
+  mkdir -p ${OPENWRT_PATH}/${1}
+}
+
+# -----------------------------------------------------------------------------
+prepare_overlay() {
+  prepare_overlay_one package
+  prepare_overlay_one target
+  # prepare_overlay_one files
+}
+
+# -----------------------------------------------------------------------------
+mount_overlay_one() {
+  _h1 "Mounting overlayfs ${1}"
+
+  LOWER_DIR=${OVERLAY_TMP}/${1}
+  UPPER_DIR=${YIOT_SRC_DIR}/override/${1}
+  WORK_DIR=${OVERLAY_TMP}/work_${1}
+
+  echo "point    :  ${BUILD_PATH}/${1}"
+  echo "lowerdir :  ${LOWER_DIR}"
+  echo "upperdir :  ${UPPER_DIR}"
+  echo "workdir  :  ${WORK_DIR}"
+
+  mountpoint -q ${BUILD_PATH}/${1} || sudo mount -t overlay overlay -o lowerdir=${LOWER_DIR},upperdir=${UPPER_DIR},workdir=${WORK_DIR} ${BUILD_PATH}/${1}
+}
+
+# -----------------------------------------------------------------------------
+mount_overlay() {
+  mount_overlay_one package
+  mount_overlay_one target
+  # mount_overlay_one files
 }
 
 # -----------------------------------------------------------------------------
@@ -235,6 +269,13 @@ do_exit() {
 # -----------------------------------------------------------------------------
 do_shell() {
   _h1 "Runing container shell"
+  
+  _start "Prepare Overlay"  
+  if [ ! -d ${OVERLAY_TMP} ]; then
+    prepare_overlay
+  fi
+  mount_overlay
+
   docker_run
   if [ "${?}" != "0" ]; then
     exit 127
@@ -245,6 +286,8 @@ do_shell() {
 
 # -----------------------------------------------------------------------------
 do_build() {
+  NEED_RESTART="false"
+
   _h1 "Building OpenWRT"
   docker_run
   if [ "${?}" != "0" ]; then
@@ -252,8 +295,33 @@ do_build() {
     exit 127
   fi
 
-  _log "Prepare ci integration"
+  _start "Prepare ci integration"
   docker_exec "cp -f /yiot-ci/ci/integration/files/build-ci.sh /yiot-base/"         || do_exit 127
+
+  _start "Update feeds"
+  if [ ! -d "${BUILD_PATH}/feeds" ]; then
+    docker_exec "cd /yiot-base/ && ./scripts/feeds update -a"         || do_exit 127
+    docker_exec "cd /yiot-base/ && ./scripts/feeds install -a -f"     || do_exit 127
+    docker_rm
+    NEED_RESTART="true"
+    cp -R -f "${BUILD_PATH}/package/feeds" ${OPENWRT_PATH}/package/
+  fi
+
+  _start "Prepare Overlay"  
+  if [ ! -d ${OVERLAY_TMP} ]; then
+    prepare_overlay
+  fi
+  mount_overlay
+
+  if [ ${NEED_RESTART} == "true" ]; then
+    docker_run
+  fi
+
+  _start "Build flutter frontend"
+  docker_exec "/yiot-base/package/yiot/frontend/scripts/build.sh"  || do_exit 127
+
+  _start "Copy configuration file"
+  docker_exec "cp -f /yiot-ci/ci/configs/${PARAM_CPU}/${PARAM_OPENWRT_CONFIGURATION}.config /yiot-base/.config"  || do_exit 127
 
   _start "Building project"
   docker_exec "/yiot-ci/ci/scripts/internal-build.sh ${PARAM_COMMAND} ${PARAM_WITH_DEBUG} -a /build-artifacts -s /yiot-base -t ${PARAM_BUILD_PROFILE} -c ${PARAM_OPENWRT_CONFIGURATION}"
@@ -267,7 +335,11 @@ do_build() {
   if [ "${PARAM_WITH_SHELL}" == "1" ]; then
      docker_shell
   fi
-  do_exit 0
+  docker_rm
+
+  "${SCRIPT_PATH}/create-vdi.sh"
+
+  exit 0
 }
 
 # -----------------------------------------------------------------------------

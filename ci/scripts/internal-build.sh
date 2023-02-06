@@ -35,11 +35,11 @@ PARAM_OPENWRT_CONFIGURATION="cv-2se"
 INTERNAL_BUILDNO=""
 
 if [ ! -z "${BUILD_NUMBER}" ]; then
-   EXTERNAL_BUILDNO="${BUILD_NUMBER}"
+    EXTERNAL_BUILDNO="${BUILD_NUMBER}"
 elif [ ! -z "${CI_PIPELINE_ID}" ]; then
-   EXTERNAL_BUILDNO="${CI_PIPELINE_ID}"
+    EXTERNAL_BUILDNO="${CI_PIPELINE_ID}"
 else
-   EXTERNAL_BUILDNO="0"
+    EXTERNAL_BUILDNO="0"
 fi
 
 # -----------------------------------------------------------------------------
@@ -82,40 +82,46 @@ if [ "${PARAM_COMMAND}" == "" ] || [ "${PARAM_COMMAND}" == "help" ]; then
 fi
 
 shift
-while [ -n "$1" ]
-do
+while [ -n "$1" ]; do
     case "$1" in
-        -h) print_usage
-            ;;
-        -t) PARAM_EXEC_PROFILE="$2"
-            shift
-            ;;
-        -s) CV2SE_PATH="$2"
-            shift
-            ;;
-        -a) CV2SE_ARTIFACTS_PATH="$2"
-            shift
-            ;;
-        -c) PARAM_OPENWRT_CONFIGURATION="$2"
-            shift
-            ;;
-        -e) PARAM_WITH_CLEAN="1"
-            ;;
-        -d) PARAM_WITH_DEBUG="1"
-            ;;
+    -h)
+        print_usage
+        ;;
+    -t)
+        PARAM_EXEC_PROFILE="$2"
+        shift
+        ;;
+    -s)
+        CV2SE_PATH="$2"
+        shift
+        ;;
+    -a)
+        CV2SE_ARTIFACTS_PATH="$2"
+        shift
+        ;;
+    -c)
+        PARAM_OPENWRT_CONFIGURATION="$2"
+        shift
+        ;;
+    -e)
+        PARAM_WITH_CLEAN="1"
+        ;;
+    -d)
+        PARAM_WITH_DEBUG="1"
+        ;;
     esac
     shift
 done
 # -----------------------------------------------------------------------------
 do_exec_profile() {
-  . ${SCRIPT_PATH}/inc/config/${PARAM_COMMAND}/${PARAM_EXEC_PROFILE}.sh
-  return "${?}"
+    . ${SCRIPT_PATH}/inc/config/${PARAM_COMMAND}/${PARAM_EXEC_PROFILE}.sh
+    return "${?}"
 }
 
 # -----------------------------------------------------------------------------
 if [ "${PARAM_COMMAND}" == "" ] || [ "${PARAM_COMMAND}" == "help" ]; then
-  print_usage
-  exit 127
+    print_usage
+    exit 127
 fi
 
 if [ ! -d "${SCRIPT_PATH}/inc/config/${PARAM_COMMAND}" ]; then
@@ -133,9 +139,9 @@ fi
 _start "Executing [${PARAM_COMMAND}/${PARAM_EXEC_PROFILE}]"
 do_exec_profile
 if [ "${?}" == "0" ]; then
-     _finish "OK"
-  else
-     _finish "ERROR: Executing [${PARAM_COMMAND}/${PARAM_EXEC_PROFILE}]"
+    _finish "OK"
+else
+    _finish "ERROR: Executing [${PARAM_COMMAND}/${PARAM_EXEC_PROFILE}]"
 fi
 
 # -----------------------------------------------------------------------------

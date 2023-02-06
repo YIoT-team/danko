@@ -28,26 +28,26 @@ else
 fi
 
 pushd ${CV2SE_PATH}
-   INTERNAL_BUILDNO="1"
-   if [ "${PARAM_WITH_CLEAN}" == "1" ]; then
-      local STAGE_NAME="Clean sources"
-      _start "${STAGE_NAME}"
-      make distclean
-      _finish  "${STAGE_NAME}"
-   fi
+INTERNAL_BUILDNO="1"
+if [ "${PARAM_WITH_CLEAN}" == "1" ]; then
+  local STAGE_NAME="Clean sources"
+  _start "${STAGE_NAME}"
+  make distclean
+  _finish "${STAGE_NAME}"
+fi
 
+local STAGE_NAME="Building images"
+_start "${STAGE_NAME}"
+./build-ci.sh "${PARAM_OPENWRT_CONFIGURATION}" "${BUILD_PARAM}"
+_finish "${STAGE_NAME}"
 
-   local STAGE_NAME="Building images"
-   _start "${STAGE_NAME}"
-   ./build-ci.sh "${PARAM_OPENWRT_CONFIGURATION}"  "${BUILD_PARAM}"
-   _finish  "${STAGE_NAME}"
+local STAGE_NAME="Archiving artifacts"
+mkdir -p ${CV2SE_ARTIFACTS_PATH}
+_start "${STAGE_NAME}"
 
-   local STAGE_NAME="Archiving artifacts"
-   mkdir -p ${CV2SE_ARTIFACTS_PATH}
-   _start "${STAGE_NAME}"
+BIN_DIR="${CV2SE_PATH}/bin/targets/x86/64"
+cp -f ${BIN_DIR}/*.gz ${CV2SE_ARTIFACTS_PATH}/
+cp -f ${BIN_DIR}/*.iso ${CV2SE_ARTIFACTS_PATH}/
 
-  cp -f ${CV2SE_PATH}/common/build/bin/* ${CV2SE_ARTIFACTS_PATH}/
-
-  cp -f ${CV2SE_PATH}/* ${CV2SE_ARTIFACTS_PATH}/
-  _finish  "${STAGE_NAME}"
+_finish "${STAGE_NAME}"
 popd

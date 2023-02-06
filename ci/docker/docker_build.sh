@@ -39,6 +39,14 @@ pushd "${SCRIPT_PATH}"
     j2 -f env -o dockerfiles/Dockerfile     dockerfiles/Dockerfile.tmpl
     j2 -f env -o dockerfiles/entrypoint.sh  dockerfiles/entrypoint.sh.tmpl
 
+    # Prepare Flutter
+    if [ ! -d dockerfiles/flutter ]; then
+        wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.3.10-stable.tar.xz
+        pushd dockerfiles
+            tar xf ../flutter_linux_3.3.10-stable.tar.xz
+        popd
+    fi
+
     docker build -t "$LIBRARY"/"$IMAGENAME":"$IMGVERS1" -t "$LIBRARY"/"$IMAGENAME":"$IMGVERS2" dockerfiles
 popd
 

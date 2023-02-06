@@ -1,2 +1,5 @@
 build-*/**
 Dockerfile
+ovtmp_*
+ci/docker/dockerfiles/flutter
+ci/docker/flutter_linux_3.3.10-stable.tar.xz

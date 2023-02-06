@@ -1,6 +1,6 @@
 [submodule "ext/openwrt"]
 	path = ext/openwrt
 	url = https://github.com/openwrt/openwrt.git
-[submodule "yiot/security/yiot"]
-	path = yiot/security/yiot
+[submodule "yiot/override/package/yiot/security/yiot"]
+	path = yiot/override/package/yiot/security/yiot
 	url = https://github.com/YIoT-team/yiot-openwrt.git
