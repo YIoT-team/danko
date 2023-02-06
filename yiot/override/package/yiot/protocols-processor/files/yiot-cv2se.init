@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+# YIoT Backend service
+
+YIOT_CV2SE="/usr/bin/yiot-cv2se"
+YIOT_LOG="/tmp/yiot-cv2se.log"
+
+START=99
+
+USE_PROCD=1
+
+start_service() {
+    echo "Starting YIoT CV-2SE servive"
+
+    procd_open_instance
+    procd_set_param respawn
+    procd_set_param command /bin/sh -c "${YIOT_CV2SE} > ${YIOT_LOG} 2>&1"
+
+    procd_close_instance
+}
+
+stop() {
+	killall yiot-cv2se
+}

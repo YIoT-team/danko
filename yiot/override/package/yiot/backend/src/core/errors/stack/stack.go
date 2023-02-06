@@ -59,9 +59,6 @@ func Get() *Stack {
 //
 // sanitizeFunctionName cleans up a function name from the module full name info.
 //
-// The function name comes with full module path like github.com/VirgilSecurity/core-kit/errors.Wrap, so it's
-// necessary to strip all the information that comes before the last dot.
-//
 func sanitizeFunctionName(filename string) string {
 	lastDotIndex := strings.LastIndex(filename, ".")
 
@@ -70,9 +67,6 @@ func sanitizeFunctionName(filename string) string {
 
 //
 // sanitizeFilename cleans up a file name from the GOROOT and GOPATH prefixes.
-//
-// The filename comes with full module path, so it's necessary to strip all the
-// information that is related to GOPATH or GOROOT.
 //
 func sanitizeFilename(filename string) string {
 	pathPrefixes := []string{

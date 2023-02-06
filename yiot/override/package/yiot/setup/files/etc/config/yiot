@@ -5,3 +5,6 @@ config main 'provision'
 	option manufacturer 'YIoT'
 	option model 'CV-2SE'
 	option serial '0123456789'
+
+config main 'backend'
+	option listen_http '10.0.20.1:80'

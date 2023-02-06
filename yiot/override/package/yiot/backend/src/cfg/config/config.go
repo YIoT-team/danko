@@ -70,24 +70,6 @@ func New() (*Config, error) {
 			"Logging level",
 		),
 
-		config.NewString(
-			ConfDiscordToken,
-			"Discord Bot token string.",
-			"",
-		),
-
-		config.NewString(
-			ConfDiscordChannel,
-			"Discord Bot channel ID.",
-			"",
-		),
-
-		config.NewString(
-			ConfNodePortIP,
-			"NodePort IP address.",
-			"127.0.0.1",
-		),
-
 		config.NewBool(
 			ConfTracerDisabled,
 			"Enable/Disable request tracing..",

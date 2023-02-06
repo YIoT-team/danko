@@ -19,7 +19,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=cv2se-backend
+PKG_NAME:=yiot-backend
 PKG_VERSION:=0.0.1
 PKG_RELEASE:=$(SUBTARGET)
 
@@ -61,6 +61,13 @@ endef
 
 define Build/Compile
 	$(call GoPackage/Build/Compile)
+endef
+
+define Package/yiot/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/yiot-backend.init $(1)/etc/init.d/yiot-backend
+  $(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/yiot_api $(1)/usr/bin/yiot-backend
 endef
 
 

@@ -19,7 +19,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=cv2se-frontend
+PKG_NAME:=yiot-frontend
 PKG_VERSION:=0.0.1
 PKG_RELEASE:=$(SUBTARGET)
 
