@@ -63,10 +63,10 @@ define Build/Compile
 	$(call GoPackage/Build/Compile)
 endef
 
-define Package/yiot/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/yiot-backend.init $(1)/etc/init.d/yiot-backend
-  $(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/yiot_api $(1)/usr/bin/yiot-backend
 endef
 
