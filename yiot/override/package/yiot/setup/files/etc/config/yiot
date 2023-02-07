@@ -7,4 +7,4 @@ config main 'provision'
 	option serial '0123456789'
 
 config main 'backend'
-	option listen_http '10.0.20.1:80'
+	option listen_http ':80'
