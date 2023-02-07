@@ -58,7 +58,6 @@ define Package/$(PKG_NAME)
     CATEGORY:=YIoT Applications
     TITLE:=YIoT CV-2SE Protocols processor
     DEPENDS:=@!SMALL_FLASH @!LOW_MEMORY_FOOTPRINT
-    TITLE:=float-test
     URL:=https://github.com/neg2led
 endef
 
