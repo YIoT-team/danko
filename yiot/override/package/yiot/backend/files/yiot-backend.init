@@ -11,7 +11,7 @@ USE_PROCD=1
 start_service() {
     local LISTEN_HTTP="$(uci_get yiot.backend.listen_http)"
 
-    echo "Starting YIoT Backend servive"
+    echo "Starting YIoT Backend service"
 
     procd_open_instance
     procd_set_param respawn

@@ -26,8 +26,8 @@ PKG_RELEASE:=$(SUBTARGET)
 https://github.com/YIoT-team/wireguard-ui/archive/refs/tags/v0.0.1.tar.gz
 
 PKG_SOURCE:=v$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/YIoT-team/wireguard-ui/archive/refs/tags/$(PKG_SOURCE)
-# PKG_HASH:=e35824e19e8acc06296ce6bfa78a14a6f3ee8f42a965f7762b7056b506457a29
+PKG_SOURCE_URL:=https://github.com/YIoT-team/wireguard-ui/archive/refs/tags
+PKG_HASH:=1b86e7d7299889b100b58f560fb4be7effe17e5e77e7ee295aa227b46bec42e9
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/wireguard-ui-$(PKG_VERSION)
 PKG_LICENSE:=MIT
@@ -37,7 +37,7 @@ PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
-GO_PKG:=yiot_api
+GO_PKG:=github.com/ngoduykhanh/wireguard-ui
 GO_PKG_BUILD_PKG:=$$(GO_PKG)
 
 GO_PKG_TAGS:=full
@@ -69,12 +69,12 @@ define Build/Compile
 	$(call GoPackage/Build/Compile)
 endef
 
-# define Package/$(PKG_NAME)/install
-# 	$(INSTALL_DIR) $(1)/etc/init.d
-# 	$(INSTALL_BIN) ./files/yiot-backend.init $(1)/etc/init.d/yiot-backend
-# 	$(INSTALL_DIR) $(1)/usr/bin
-# 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/yiot_api $(1)/usr/bin/yiot-backend
-# endef
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/yiot-wg-ui.init $(1)/etc/init.d/yiot-wg-ui
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/wireguard-ui $(1)/usr/bin/yiot-wg-ui
+endef
 
 
 $(eval $(call GoBinPackage,$(PKG_NAME)))
