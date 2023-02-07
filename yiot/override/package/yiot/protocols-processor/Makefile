@@ -68,7 +68,7 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/yiot-cv2se.init $(1)/etc/init.d/yiot-cv2se
-	$(INSTALL_DIR) $(1)/bin
+	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/target/$(REAL_GNU_TARGET_NAME)/release/cv2se $(1)/usr/bin/$(PKG_NAME)
 endef
 
