@@ -38,7 +38,6 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 GO_PKG:=github.com/ngoduykhanh/wireguard-ui
-GO_PKG_BUILD_PKG:=$$(GO_PKG)
 
 GO_PKG_TAGS:=full
 GO_PKG_LDFLAGS:=-s -w
@@ -66,14 +65,21 @@ endmenu
 endef
 
 define Build/Compile
+	cd $(PKG_BUILD_DIR) && ./prepare_assets.sh
+	# cd $(PKG_BUILD_DIR) && rice embed-go 
 	$(call GoPackage/Build/Compile)
 endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/yiot-wg-ui.init $(1)/etc/init.d/yiot-wg-ui
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/wireguard-ui $(1)/usr/bin/yiot-wg-ui
+
+	$(INSTALL_DIR) $(1)/opt/yiot-wg-ui
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/wireguard-ui $(1)/opt/yiot-wg-ui/yiot-wg-ui
+	
+	$(INSTALL_DIR) $(1)/opt/yiot-wg-ui/github.com/ngoduykhanh/wireguard-ui
+	$(CP) -L $(PKG_BUILD_DIR)/assets $(1)/opt/yiot-wg-ui/github.com/ngoduykhanh/wireguard-ui/
+	$(CP) -L $(PKG_BUILD_DIR)/templates $(1)/opt/yiot-wg-ui/github.com/ngoduykhanh/wireguard-ui/
 endef
 
 
