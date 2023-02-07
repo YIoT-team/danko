@@ -67,7 +67,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/yiot-backend.init $(1)/etc/init.d/yiot-backend
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(GO_BUILD_BIN_DIR)/yiot_api $(1)/usr/bin/yiot-backend
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/yiot_api $(1)/usr/bin/yiot-backend
 endef
 
 
