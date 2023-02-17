@@ -46,7 +46,10 @@ RUN cd /etc/yum.repos.d/ && \
            libcurl-devel libmpc-devel libtool libusb libxml2-devel make mpfr-devel ncurses-devel openssl \
            openssl-devel patch patchutils perl-ExtUtils-MakeMaker subversion sudo unzip util-linux valgrind wget \
     which zlib zlib-devel curl mercurial bubblewrap file mc rsync python3 python3-distutils-extra genisoimage libstdc++-static \
-    qemu-img elfutils-libelf-devel && \
+    qemu-img elfutils-libelf-devel @nodejs && \
+    curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo && \
+    rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg && \
+    yum -y install yarn && \
     yum -y clean all
 
 #
