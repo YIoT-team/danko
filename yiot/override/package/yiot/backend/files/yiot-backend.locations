@@ -1,0 +1,8 @@
+location /api {
+        proxy_pass http://127.0.0.1:81;
+}
+
+location /_service {      
+        proxy_pass http://127.0.0.1:81;  
+}
+

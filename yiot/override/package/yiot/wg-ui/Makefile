@@ -74,6 +74,9 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/yiot-wg-ui.init $(1)/etc/init.d/yiot-wg-ui
 
+	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
+	$(INSTALL_BIN) ./files/yiot-wg-ui.locations $(1)/etc/nginx/conf.d/yiot-wg-ui.locations
+
 	$(INSTALL_DIR) $(1)/opt/yiot-wg-ui
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/wireguard-ui $(1)/opt/yiot-wg-ui/yiot-wg-ui
 	

@@ -1,0 +1,5 @@
+location / {
+	root /www-yiot;	
+	index  index.html;
+}
+

@@ -66,6 +66,10 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/yiot-backend.init $(1)/etc/init.d/yiot-backend
+
+	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
+	$(INSTALL_BIN) ./files/yiot-backend.locations $(1)/etc/nginx/conf.d/yiot-backend.locations
+
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/yiot_api $(1)/usr/bin/yiot-backend
 endef
