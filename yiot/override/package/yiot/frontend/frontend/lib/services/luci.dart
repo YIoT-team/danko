@@ -17,49 +17,89 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+import 'dart:html';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+// ---------------------------------------------------------------------------
+//
+//  Luci RPC commands
+//
+enum LuciCommand {
+  login("login");
+
+  final String val;
+  const LuciCommand(this.val);
+}
+
+// ---------------------------------------------------------------------------
+//
+//  Luci Service response
+//
+class LuciResponse {
+  late String data;
+  late String error;
+  LuciResponse({required this.data, required this.error});
+}
+
+// ---------------------------------------------------------------------------
+//
+//  Luci Service class
+//
 class LuciService {
-  static const _ENDPOINT_LOGIN =
+  static const _ENDPOINT_AUTH =
       "/cgi-bin/luci/rpc/auth";
+
+  // ---------------------------------------------------------------------------
+  //
+  //  General RPC Luci call
+  //
+  static Future<LuciResponse> _rpcRequest(String endpoint, int id, LuciCommand command, List<String> params) async {
+    // Prepare URL
+    final origin = "http://192.168.0.251";//window.location.origin;
+    Uri url = Uri.parse(origin + endpoint);
+
+    // Prepare Body
+    var body = json.encode({'id': id, 'method': command.val, 'params': params});
+
+    // RPC processing
+    final response = await http.post(url, body: body);
+
+    // Check response
+    if (response.statusCode != 200) {
+      return LuciResponse(
+        data: "",
+        error: "Cannot process Luci RPC ${endpoint}, command: ${command}",
+      );
+    }
+
+    // Parse JSON response
+    final responseJson = json.decode(response.body);
+    String data = "";
+    String error;
+
+    if (responseJson['result'] != null) {
+      data = responseJson['result'];
+    }
+
+    if (responseJson['error'] == null) {
+      error = "";
+    } else {
+      error = responseJson['error'];
+    }
+
+    return LuciResponse(
+      data: data,
+      error: error,
+    );
+  }
 
   // ---------------------------------------------------------------------------
   //
   //  Luci login
   //
-  static Future<String> login(String user, String password) async {
-//    Uri url = Uri.parse(
-////        YIoTBackendParams.backendBase() + _ENDPOINT_JENKINS_START);
-////
-////    // Prepare WireGuard configuration
-////    var config = "";
-////    if (wgConfig != "") {
-////      // Wrap config to base64
-////      Codec<String, String> stringToBase64 = utf8.fuse(base64);
-////      config = stringToBase64.encode(wgConfig);
-////    }
-////
-////    var body = json.encode({'user': user, 'password': password, "subnet": "10.221.17.0/24", "config": config});
-////
-////    var headers = YIoTRestHelpers.headers(token, owner);
-////    final response = await http.post(url, body: body, headers: headers);
-////
-////    if (response.statusCode != 200) {
-////      return Future.error("Cannot Start MQTT Service");
-////    }
-////
-////    final responseJson = json.decode(response.body);
-////    final responseInfo = YIoTMqttInfoModel(responseJson);
-////    if (responseInfo.isValid) {
-////      var healthUrl = responseInfo.url + responseInfo.healthUrl;
-////      await YIoTRestHelpers.waitActive(healthUrl, token, owner, 5, 15);
-////      return responseInfo;
-////    }
-////
-////    YIoTServiceHelpers.processError(url, response);
-////    return Future.error("Cannot decode Owner's info");
-    return "test";
+  static Future<LuciResponse> login(String user, String password) async {
+    return _rpcRequest(_ENDPOINT_AUTH, 1, LuciCommand.login, [user, password]);
   }
 }
 // -----------------------------------------------------------------------------

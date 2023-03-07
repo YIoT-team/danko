@@ -40,7 +40,8 @@ class YIoTSession {
       final SharedPreferences prefs = await _prefs;
 
       // Luci login
-      String session = await LuciService.login(user, password);
+      final res = await LuciService.login(user, password);
+      final session = res.data;
 
       // Return False if not successful
       if (session == "") {
