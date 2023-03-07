@@ -24,11 +24,15 @@ import 'package:flutter/material.dart';
 import 'package:yiot_portal/routes/routes.dart';
 
 import 'package:yiot_portal/theme/theme.dart';
-import 'package:yiot_portal/pages/container/container-page.dart';
+
+import 'package:yiot_portal/session/yiot-session.dart';
 
 //
 //  Pages
 //
+import 'package:yiot_portal/pages/container/container-page.dart';
+
+import 'package:yiot_portal/pages/login-page.dart';
 import 'package:yiot_portal/pages/home-page.dart';
 
 import 'package:yiot_portal/pages/data/flow-page.dart';
@@ -73,8 +77,11 @@ class _YIoTPortalState extends State<YIoTPortal> {
       body: HomePage(),
     ));
 
+    // Login page
+    _routes.register(LoginPage());
+
     // Data
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/data/flow",
       body: DataFlowPage(),
     ));
@@ -84,36 +91,35 @@ class _YIoTPortalState extends State<YIoTPortal> {
     //
 
     // Server
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/vpn/server",
       body: VpnServerPage(),
     ));
 
     // Client
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/vpn/client",
       body: VpnClientPage(),
     ));
-
 
     //
     // Hardware
     //
 
     // WiFi
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/hardware/wifi",
       body: WiFiPage(),
     ));
 
     // Ethernet
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/hardware/ethernet",
       body: EthernetPage(),
     ));
 
     // Serial
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/hardware/serial",
       body: SerialPage(),
     ));
@@ -123,13 +129,13 @@ class _YIoTPortalState extends State<YIoTPortal> {
     //
 
     // Logs page
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/system/logs",
       body: LogsPage(),
     ));
 
     // Reboot page
-    _routes.registerDefault(ContainerPage(
+    _routes.register(ContainerPage(
       routeData: "/system/reboot",
       body: RebootPage(),
     ));
@@ -140,6 +146,11 @@ class _YIoTPortalState extends State<YIoTPortal> {
     return MultiProvider(
       // --- Providers ---
       providers: [
+        Provider(
+          create: (context) {
+            return YIoTSession();
+          },
+        ),
         Provider(
           create: (context) {
             return YiotProvisionBloc();
