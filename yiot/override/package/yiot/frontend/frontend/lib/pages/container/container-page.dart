@@ -17,6 +17,8 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+import 'dart:html' as html;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:yiot_portal/theme/theme.dart';
@@ -94,7 +96,11 @@ class ContainerPage extends StatelessWidget implements RoutedWidgetInterface {
                   selectedRoute: routeData,
                   onSelected: (item) {
                     if (item.route != null && item.route != routeData) {
-                      Navigator.of(context).pushNamed(item.route!);
+                      if (item.route!.startsWith('https://', 0) || item.route!.startsWith('http://', 0)) {
+                        html.window.open(item.route!, item.title);
+                      } else {
+                        Navigator.of(context).pushNamed(item.route!);
+                      }
                     }
                   },
                   header: Container(
