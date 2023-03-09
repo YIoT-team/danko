@@ -151,6 +151,9 @@ DOCKER_CONTAINER_NAME="${IMAGENAME}_build_${JOB_NAME:-NONE}_${PARAM_CPU}_${BUILD
 OVERLAY_TMP="${CI_PATH}/ovtmp_${PARAM_CPU}"
 BUILD_PATH="${CI_PATH}/build-${PARAM_CPU}"
 
+FEEDS_SRC="${CV2SE_PATH}/feeds"
+FEEDS_DST="${OPENWRT_PATH}/feeds"
+
 # -----------------------------------------------------------------------------
 docker_check_privileges() {
     sudo docker ps 2>&1 >/dev/null
@@ -230,8 +233,14 @@ prepare_overlay_one() {
 
 # -----------------------------------------------------------------------------
 prepare_overlay() {
+  # Prepare a base state of feeds
+  if [ ! -d "${FEEDS_DST}" ]; then
+    cp -R "${FEEDS_SRC}" "${FEEDS_DST}"
+  fi
+
   prepare_overlay_one package
   prepare_overlay_one target
+  prepare_overlay_one feeds
   # prepare_overlay_one files
 }
 
@@ -255,6 +264,7 @@ mount_overlay_one() {
 mount_overlay() {
   mount_overlay_one package
   mount_overlay_one target
+  mount_overlay_one feeds
   # mount_overlay_one files
 }
 
