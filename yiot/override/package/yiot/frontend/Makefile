@@ -51,7 +51,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/www-yiot
-	$(CP) ./files/* $(1)/www-yiot/
+	$(CP) ./build/* $(1)/www-yiot/
 
 	$(INSTALL_DIR) $(1)/etc/nginx/conf.d
 	$(INSTALL_BIN) ./files/yiot-ui.locations $(1)/etc/nginx/conf.d/yiot-ui.locations

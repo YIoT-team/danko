@@ -151,9 +151,6 @@ DOCKER_CONTAINER_NAME="${IMAGENAME}_build_${JOB_NAME:-NONE}_${PARAM_CPU}_${BUILD
 OVERLAY_TMP="${CI_PATH}/ovtmp_${PARAM_CPU}"
 BUILD_PATH="${CI_PATH}/build-${PARAM_CPU}"
 
-FEEDS_SRC="${CV2SE_PATH}/feeds"
-FEEDS_DST="${OPENWRT_PATH}/feeds"
-
 # -----------------------------------------------------------------------------
 docker_check_privileges() {
     sudo docker ps 2>&1 >/dev/null
@@ -233,11 +230,6 @@ prepare_overlay_one() {
 
 # -----------------------------------------------------------------------------
 prepare_overlay() {
-  # Prepare a base state of feeds
-  if [ ! -d "${FEEDS_DST}" ]; then
-    cp -R "${FEEDS_SRC}" "${FEEDS_DST}"
-  fi
-
   prepare_overlay_one package
   prepare_overlay_one target
   prepare_overlay_one feeds
@@ -314,6 +306,7 @@ do_build() {
     docker_exec "cd /yiot-base/ && ./scripts/feeds install -a -f"     || do_exit 127
     docker_rm
     NEED_RESTART="true"
+    cp -R -f "${BUILD_PATH}/feeds" ${OPENWRT_PATH}/
     cp -R -f "${BUILD_PATH}/package/feeds" ${OPENWRT_PATH}/package/
   fi
 

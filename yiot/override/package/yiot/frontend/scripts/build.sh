@@ -23,7 +23,7 @@ set -e
 
 SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
 PROJECT_PATH="${SCRIPT_PATH}/../"
-BUILD_PATH="${PROJECT_PATH}/files"
+BUILD_PATH="${PROJECT_PATH}/build"
 
 rm -rf "${BUILD_PATH}"
 mkdir -p "${BUILD_PATH}/assets/"
