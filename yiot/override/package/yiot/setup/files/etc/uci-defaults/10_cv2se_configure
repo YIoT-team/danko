@@ -1,7 +1,12 @@
 #!/bin/sh
 
+# TODO: Temporary network configuration
 uci set network.lan.ipaddr='192.168.0.251'
 uci set network.lan.gateway='192.168.0.1'
+
+# Set Host Name
+uci set system.@system[0].hostname="CV-2SE"
+
 uci commit network
 
 exit 0
