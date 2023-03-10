@@ -18,14 +18,12 @@
 //  ────────────────────────────────────────────────────────────
 
 import 'package:provider/provider.dart';
-
 import 'package:flutter/material.dart';
 
 import 'package:yiot_portal/routes/routes.dart';
-
 import 'package:yiot_portal/theme/theme.dart';
-
 import 'package:yiot_portal/session/yiot-session.dart';
+import 'package:yiot_portal/services/helpers.dart';
 
 //
 //  Pages
@@ -44,7 +42,7 @@ import 'package:yiot_portal/pages/hardware/wifi-page.dart';
 import 'package:yiot_portal/pages/hardware/ethernet-page.dart';
 import 'package:yiot_portal/pages/hardware/serial-page.dart';
 
-import 'package:yiot_portal/pages/system/reboot-page.dart';
+import 'package:yiot_portal/pages/luci-part-page.dart';
 import 'package:yiot_portal/pages/system/logs-page.dart';
 
 //
@@ -91,10 +89,6 @@ class _YIoTPortalState extends State<YIoTPortal> {
     //
 
     // Server
-    _routes.register(ContainerPage(
-      routeData: "/vpn/server",
-      body: VpnServerPage(),
-    ));
 
     // Client
     _routes.register(ContainerPage(
@@ -121,23 +115,29 @@ class _YIoTPortalState extends State<YIoTPortal> {
     // Serial
     _routes.register(ContainerPage(
       routeData: "/hardware/serial",
-      body: SerialPage(),
+      body: LuciPartPage(title: "Serial", url: YIoTServiceHelpers.serialURL()),
     ));
 
     //
     //  System
     //
 
+    // Terminal page
+    _routes.register(ContainerPage(
+      routeData: "/system/terminal",
+      body: LuciPartPage(title: "Terminal", url: YIoTServiceHelpers.ttyURL()),
+    ));
+
     // Logs page
     _routes.register(ContainerPage(
       routeData: "/system/logs",
-      body: LogsPage(),
+      body: LuciPartPage(title: "", url: YIoTServiceHelpers.logsURL()),
     ));
 
     // Reboot page
     _routes.register(ContainerPage(
       routeData: "/system/reboot",
-      body: RebootPage(),
+      body: LuciPartPage(title: "", url: YIoTServiceHelpers.rebootURL()),
     ));
   }
 

@@ -27,10 +27,16 @@ class YIoTServiceHelpers {
   //
   static String baseURL() {
     if (!kReleaseMode) {
-      return "http://192.168.0.251";
+      return "http://192.168.0.249";
     }
     return window.location.origin;
   }
+
+  // ---------------------------------------------------------------------------
+  //
+  //  WireGuard server UI helpers
+  //
+  static String wireguardURL() => baseURL() + "/wireguard";
 
   // ---------------------------------------------------------------------------
   //
@@ -38,7 +44,9 @@ class YIoTServiceHelpers {
   //
   static String luciURL() => baseURL() + "/cgi-bin/luci";
   static String ttyURL() => luciURL() + "/admin/services/ttyd";
-
+  static String rebootURL() => luciURL() + "/admin/system/reboot";
+  static String logsURL() => luciURL() + "/admin/status/logs";
+  static String serialURL() => luciURL() + "/admin/services/ser2net";
 
 }
 

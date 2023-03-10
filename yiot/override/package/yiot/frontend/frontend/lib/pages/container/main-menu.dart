@@ -54,7 +54,7 @@ class MainMenu {
         AdminMenuItem(
           title: 'Server',
           icon: YIoTIcons.server,
-          route: '/vpn/server',
+          route: YIoTServiceHelpers.wireguardURL(),
         ),
         AdminMenuItem(
           title: 'Client',
@@ -96,6 +96,11 @@ class MainMenu {
       title: 'System',
       icon: Icons.settings,
       children: [
+        AdminMenuItem(
+          title: 'Terminal',
+          icon: Icons.keyboard_alt_outlined,
+          route: '/system/terminal',
+        ),
         AdminMenuItem(
           title: 'Logs',
           icon: Icons.text_snippet_outlined,
