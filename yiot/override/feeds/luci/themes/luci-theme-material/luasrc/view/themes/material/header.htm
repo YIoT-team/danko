@@ -51,6 +51,18 @@
 <% end -%>
 <script src="<%=url('admin/translations', luci.i18n.context.lang)%><%# ?v=PKG_VERSION %>"></script>
 <script src="<%=resource%>/cbi.js"></script>
+
+
+<script>
+	function inIframe() {
+		try {
+			return window.self !== window.top;
+		} catch (e) {
+			return true;
+		}
+	}
+</script>
+
 <title><%=striptags( (boardinfo.hostname or "?") .. ( (node and node.title) and ' - ' .. translate(node.title) or '')) %> - LuCI</title>
 <% if css then %><style title="text/css">
 <%= css %>
@@ -58,12 +70,36 @@
 <% end -%>
 </head>
 <body class="lang_<%=luci.i18n.context.lang%> <% if luci.dispatcher.context.authsession then %>logged-in<% end %> <% if not (path == "") then %>node-<%= path %><% else %>node-main-login<% end %>" data-page="<%= pcdata(path) %>">
-<header>
-	<div class="fill">
-	</div>
-</header>
-<div class="main">
-	<div class="main">
+
+<script>
+	if (!inIframe()) {
+		document.write("<header>");
+		document.write("	<div class='fill'>");
+		document.write("		<div class='container'>");
+		document.write("			<span class='showSide'></span>");
+		document.write("			<a id='logo' href='<% if luci.dispatcher.context.authsession then %><%=url('admin/status/overview')%><% else %>#<% end %>'><img src='<%=media%>/brand.png' alt='OpenWrt'></a>");
+		document.write("			<a class='brand' href='#'><%=striptags(boardinfo.hostname or '?')%></a>");
+		document.write("			<span class='status' id='indicators'></span>");
+		document.write("		</div>");
+		document.write("	</div>");
+		document.write("</header>");
+	}
+</script>
+
+	<script>
+		if (!inIframe()) {
+			document.write("<div class='main'>");
+			document.write("<div style='' class='loading'><span><div class='loading-img'></div><%:Collecting data...%></span></div>");
+			document.write("	<div class='main-left' id='mainmenu' style='display:none'></div> ");
+			document.write("	<div class='main-right'> ");
+			document.write("		<div class='modemenu-buttons' style='display:none'>");
+			document.write("			<ul id='modemenu'></ul> ");
+			document.write("		</div> ");
+		} else {
+			document.write("<div class='container'>");
+			document.write("<div class='container'>");
+		}
+	</script>
 		<div class="darkMask"></div>
 		<div id="maincontent">
 			<div class="container">
