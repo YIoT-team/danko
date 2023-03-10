@@ -21,9 +21,10 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:yiot_portal/components/ui/yiot-icons.dart';
+import 'package:yiot_portal/services/helpers.dart';
 
 class MainMenu {
-  static const List<AdminMenuItem> items = const [
+  static List<AdminMenuItem> items = [
 
     //
     //  Home page
@@ -106,6 +107,11 @@ class MainMenu {
           route: '/system/reboot',
         ),
       ],
+    ),
+    AdminMenuItem(
+      title: 'Advanced',
+      icon: Icons.auto_awesome,
+      route: YIoTServiceHelpers.luciURL(),
     ),
   ];
 }
