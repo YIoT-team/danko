@@ -17,68 +17,70 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+import 'dart:html' as html;
 import 'package:flutter/material.dart';
-import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
-import 'package:yiot_portal/components/ui/yiot-secondary-button.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:yiot_portal/components/ui/yiot-dialog-button.dart';
+import 'package:yiot_portal/components/ui/yiot-file-picker.dart';
+import 'package:yiot_portal/services/helpers.dart';
 
 // -----------------------------------------------------------------------------
 
-class YIoTCommunicatorWidget extends StatefulWidget {
- final textStream;
-
-  const YIoTCommunicatorWidget(
-      {required this.textStream, Key? key})
-      : super(key: key);
-
-  @override
-  State<YIoTCommunicatorWidget> createState() => _YIoTCommunicatorWidgetState(
-       textStream: textStream,
-      );
+class WireGuardConfig {
+  late final String name;
+  late final int size;
+  late final List<int>? data;
+  WireGuardConfig({required this.name, required this.size, required this.data});
 }
 
-class _YIoTCommunicatorWidgetState extends State<YIoTCommunicatorWidget> {
-  static const _space = 10.0;
-  final textStream;
-  late TextEditingController _controller;
-  ScrollController _scrollController = ScrollController();
-
-  _YIoTCommunicatorWidgetState({required this.textStream});
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-   try {
-     textStream.listen((data) {
-       _controller.text += "\n" + String.fromCharCodes(data);
-       Future.delayed(const Duration(milliseconds: 500), () {
-         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-       });
-     });
-   } catch (_) {}
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(_space),
-      child: Column(
-        children: [
-          const SizedBox(height: _space),
-          TextField(
-            keyboardType: TextInputType.multiline,
-            controller: _controller,
-            scrollController: _scrollController,
-            readOnly: true,
-            maxLines: 25,
-            decoration: InputDecoration(
-              hintText: "Communication data",
-              border: OutlineInputBorder(),
-            ),
-          ),
-        ],
-      ),
+class YIoTWgAddDialogue {
+  static Future<WireGuardConfig> show(BuildContext context) async {
+    var _res = WireGuardConfig(
+      name: "",
+      size: 0,
+      data: null,
     );
+
+    await Alert(
+        context: context,
+        title: "Add WireGuard connection",
+        content: Column(
+          children: <Widget>[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: 300,
+              child: YIoTFilePicker(
+                welcomeText: 'Choose VPN configuration file',
+                extensions: ['conf'],
+                onFileSelected: (name, size, data) {
+                  _res = WireGuardConfig(
+                      name: name,
+                      size: size,
+                      data: data,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        buttons: [
+          YIoTDialogButton(
+            context: context,
+            title: "Ok",
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          YIoTDialogButton(
+            context: context,
+            title: "Help",
+            color: Colors.grey,
+            onPressed: () {
+              html.window.open(YIoTServiceHelpers.wgAddHelpURL(), "wg-add-help");
+            },
+          ),
+        ]).show();
+    return _res;
   }
 }
 

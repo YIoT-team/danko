@@ -49,6 +49,11 @@ class YIoTServiceHelpers {
   static String serialURL() => luciURL() + "/admin/services/ser2net";
   static String wgClientsURL() => luciURL() + "/admin/status/wireguard";
 
+  // ---------------------------------------------------------------------------
+  //
+  //  CV-2SE documentation
+  //
+  static String wgAddHelpURL() => "https://docs.yiot.dev/docs/cv2se-faq#add-wireguard-connection";
 }
 
 // -----------------------------------------------------------------------------

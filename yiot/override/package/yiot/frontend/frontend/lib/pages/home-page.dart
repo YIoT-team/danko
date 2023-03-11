@@ -25,7 +25,6 @@ import 'package:yiot_portal/components/ui/yiot-title.dart';
 import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
 import 'package:yiot_portal/bloc/yiot_provision_bloc.dart';
 import 'package:yiot_portal/components/ui/yiot-waiting-indicator.dart';
-import 'package:yiot_portal/components/ui/yiot-communicator.dart';
 import 'package:yiot_portal/model/yiot-license.dart';
 import 'package:yiot_portal/model/yiot-manufacturing-info.dart';
 
@@ -100,22 +99,6 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     Text('Device detected ...'),
-                  ],
-                ),
-              );
-            }
-
-            //
-            //  Provision is in progress
-            //
-            if (state is YiotProvisionInProgress) {
-              return Container(
-                alignment: Alignment.topCenter,
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Text('Provision is in progress ...'),
-                    YIoTCommunicatorWidget(textStream: state.stream),
                   ],
                 ),
               );

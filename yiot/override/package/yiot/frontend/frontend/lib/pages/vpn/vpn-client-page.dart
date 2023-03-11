@@ -22,6 +22,9 @@ import 'package:yiot_portal/components/ui/yiot-title.dart';
 import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
 import 'package:yiot_portal/components/ui/yiot-secondary-button.dart';
 
+import 'package:yiot_portal/pages/vpn/yiot-wg-add-dialogue.dart';
+import 'package:yiot_portal/pages/vpn/yiot-wg-remove-dialogue.dart';
+
 import 'package:yiot_portal/services/helpers.dart';
 
 import 'package:webviewx/webviewx.dart';
@@ -36,6 +39,8 @@ class VpnClientPage extends StatefulWidget {
 
 // -----------------------------------------------------------------------------
 class _VpnClientPageState extends State<VpnClientPage> {
+  bool _disableWebView = false;
+
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
@@ -55,8 +60,14 @@ class _VpnClientPageState extends State<VpnClientPage> {
         children: [
           YIoTPrimaryButton(
             text: "Add",
-            onPressed: () {
-              print("Add Wireguard client");
+            onPressed: () async {
+              setState(() {
+                _disableWebView = true;
+              });
+              await YIoTWgAddDialogue.show(context);
+              setState(() {
+                _disableWebView = false;
+              });
             },
           ),
           SizedBox(
@@ -64,8 +75,14 @@ class _VpnClientPageState extends State<VpnClientPage> {
           ),
           YIoTSecondaryButton(
             text: "Remove",
-            onPressed: () {
-              print("Remove Wireguard client");
+            onPressed: () async {
+              setState(() {
+                _disableWebView = true;
+              });
+              await YIoTWgRemoveDialogue.show(context);
+              setState(() {
+                _disableWebView = false;
+              });
             },
           ),
         ],
@@ -75,6 +92,7 @@ class _VpnClientPageState extends State<VpnClientPage> {
       ),
       // Add WebView component
       WebViewX(
+        ignoreAllGestures: !_disableWebView,
         width: 1024,
         height: screenSize.height - 200,
         initialContent: YIoTServiceHelpers.wgClientsURL(),
