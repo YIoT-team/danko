@@ -54,7 +54,7 @@ class MainMenu {
         AdminMenuItem(
           title: 'Server',
           icon: YIoTIcons.server,
-          route: YIoTServiceHelpers.wireguardURL(),
+          route: YIoTServiceHelpers.wgServerURL(),
         ),
         AdminMenuItem(
           title: 'Client',

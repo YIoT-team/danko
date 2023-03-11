@@ -36,7 +36,7 @@ class YIoTServiceHelpers {
   //
   //  WireGuard server UI helpers
   //
-  static String wireguardURL() => baseURL() + "/wireguard";
+  static String wgServerURL() => baseURL() + "/wireguard";
 
   // ---------------------------------------------------------------------------
   //
@@ -47,6 +47,7 @@ class YIoTServiceHelpers {
   static String rebootURL() => luciURL() + "/admin/system/reboot";
   static String logsURL() => luciURL() + "/admin/status/logs";
   static String serialURL() => luciURL() + "/admin/services/ser2net";
+  static String wgClientsURL() => luciURL() + "/admin/status/wireguard";
 
 }
 

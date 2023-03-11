@@ -217,6 +217,36 @@ class _DataFlowPageState extends State<DataFlowPage> {
         parentContext: context,
         items: [
           ActionChip(
+              label: const Text('Add source'),
+              onPressed: () {
+                dashboard.addElement(FlowElement(
+                    position: position - const Offset(40, 40),
+                    size: const Size(250, 80),
+                    text: '[TCP] 192.168.0.100',
+                    kind: ElementKind.rectangle,
+                    handlers: [
+                      // Handler.bottomCenter,
+                      // Handler.topCenter,
+                      // Handler.leftCenter,
+                      Handler.rightCenter,
+                    ]));
+              }),
+          ActionChip(
+              label: const Text('Add destination'),
+              onPressed: () {
+                dashboard.addElement(FlowElement(
+                    position: position - const Offset(40, 40),
+                    size: const Size(250, 80),
+                    text: 'wg0',
+                    kind: ElementKind.rectangle,
+                    handlers: [
+                      // Handler.bottomCenter,
+                      // Handler.topCenter,
+                      Handler.leftCenter,
+                      // Handler.rightCenter,
+                    ]));
+              }),
+          ActionChip(
               label: const Text('Add diamond'),
               onPressed: () {
                 dashboard.addElement(FlowElement(
@@ -225,9 +255,9 @@ class _DataFlowPageState extends State<DataFlowPage> {
                     text: '${dashboard.elements.length}',
                     kind: ElementKind.diamond,
                     handlers: [
-                      Handler.bottomCenter,
-                      Handler.topCenter,
-                      Handler.leftCenter,
+                      // Handler.bottomCenter,
+                      // Handler.topCenter,
+                      // Handler.leftCenter,
                       Handler.rightCenter,
                     ]));
               }),
