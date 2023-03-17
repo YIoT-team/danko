@@ -47,6 +47,7 @@ define Build/Configure
 endef
 
 define Build/Compile
+  scripts/build.sh
 endef
 
 define Package/$(PKG_NAME)/install
