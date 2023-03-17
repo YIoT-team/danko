@@ -14,6 +14,48 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
+  <style>
+    .container {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .progress-bar__container {
+      width: 80%;
+      height: 2rem;
+      border-radius: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s;
+      will-change: transform;
+      box-shadow: 0 0 5px #858282;
+    }
+
+    .progress-bar {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      content: "";
+      background-color: #000000;
+      top:0;
+      bottom: 0;
+      left: -100%;
+      border-radius: inherit;
+      display: flex;
+      justify-content: center;
+      align-items:center;
+      color: white;
+      font-family: sans-serif;
+    }
+
+    .progress-bar__text {
+      display: none;
+    }
+  </style>
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -42,21 +84,49 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <script src="scripts/gsap.min.js"></script>
 </head>
 <body>
+<!--  <div class="loading">-->
+    <div class="container">
+      <div class="progress-bar__container">
+        <div class="progress-bar">
+          <span class="progress-bar__text">Uploaded Successfully!</span>
+        </div>
+      </div>
+    </div>
+
+<!--  </div>-->
   <script>
+    function updateProgress(num) {
+      const progressBarContainer = document.querySelector('.progress-bar__container');
+      const progressBar = document.querySelector('.progress-bar');
+      const progressBarText = document.querySelector('.progress-bar__text');
+
+      let time = 0;
+      let endState = 100;
+
+      gsap.to(progressBar, {
+        x: num + "%",
+        duration: 2,
+      });
+    }
+
     window.addEventListener('load', function(ev) {
+      updateProgress(15);
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         }
       }).then(function(engineInitializer) {
+        updateProgress(50);
         return engineInitializer.initializeEngine();
       }).then(function(appRunner) {
+        updateProgress(80);
         return appRunner.runApp();
       });
     });
-  </script>
+   </script>
 </body>
 </html>
