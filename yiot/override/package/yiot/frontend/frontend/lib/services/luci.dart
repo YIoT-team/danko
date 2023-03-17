@@ -88,6 +88,10 @@ class LuciService {
       error = responseJson['error'];
     }
 
+    if (data != "" && error == "") {
+      document.cookie = "sysauth_http=${data}";
+    }
+
     return LuciResponse(
       data: data,
       error: error,
