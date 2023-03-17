@@ -1,6 +1,6 @@
 {
-    "name": "YIoT Portal",
-    "short_name": "yiot_portal",
+    "name": "YIoT CV-2SE",
+    "short_name": "yiot_cv2se",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

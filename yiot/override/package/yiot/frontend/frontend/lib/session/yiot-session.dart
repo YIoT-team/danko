@@ -29,7 +29,6 @@ class YIoTSession {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future<bool> isActive() async {
-    return true;
     final SharedPreferences prefs = await _prefs;
 
     // TODO: Check session timeout
