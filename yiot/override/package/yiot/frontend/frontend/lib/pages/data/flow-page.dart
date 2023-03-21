@@ -17,12 +17,15 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+import 'dart:convert' show json;
 import 'package:flutter/material.dart';
 import 'package:yiot_portal/components/ui/yiot-title.dart';
 import 'package:yiot_portal/pages/data/helpers/text-menu.dart';
 import 'package:yiot_portal/pages/data/helpers/element-settings-menu.dart';
 import 'package:flutter_flow_chart/flutter_flow_chart.dart';
 import 'package:star_menu/star_menu.dart';
+
+import 'package:yiot_portal/controllers/yiot-flow-controller.dart';
 
 // -----------------------------------------------------------------------------
 class DataFlowPage extends StatefulWidget {
@@ -323,20 +326,32 @@ class _DataFlowPageState extends State<DataFlowPage> {
               onPressed: () {
                 dashboard.removeAllElements();
               }),
-//          ActionChip(
-//              label: const Text('SAVE dashboard'),
-//              onPressed: () async {
-//                Directory appDocDir =
-//                await path.getApplicationDocumentsDirectory();
-//                dashboard.saveDashboard('${appDocDir.path}/FLOWCHART.json');
-//              }),
-//          ActionChip(
-//              label: const Text('LOAD dashboard'),
-//              onPressed: () async {
-//                Directory appDocDir =
-//                await path.getApplicationDocumentsDirectory();
-//                dashboard.loadDashboard('${appDocDir.path}/FLOWCHART.json');
-//              }),
+          ActionChip(
+              label: const Text('SAVE dashboard'),
+              onPressed: () async {
+                print(dashboard.toJson());
+                YIoTFlowController.save(dashboard.prettyJson());
+              }),
+          ActionChip(
+              label: const Text('LOAD dashboard'),
+              onPressed: () async {
+                // Load Dashboard data
+                final data = await YIoTFlowController.load();
+
+                // Apply data if present
+                if (!data.isEmpty) {
+                  dashboard.elements.clear();
+                  List<FlowElement> all = List<FlowElement>.from(
+                    ((json.decode(data))['elements'] as List<dynamic>).map<FlowElement>(
+                          (x) => FlowElement.fromMap(x as Map<String, dynamic>),
+                    ),
+                  );
+                  for (int i = 0; i < all.length; i++) {
+                    dashboard.addElement(all.elementAt(i));
+                  }
+                  dashboard.notifyListeners();
+                }
+              }),
         ],
       ),
     );
