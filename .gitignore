@@ -1,4 +1,5 @@
 build-*/**
+.idea
 Dockerfile
 ovtmp_*
 ci/docker/dockerfiles/flutter
