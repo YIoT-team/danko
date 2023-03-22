@@ -75,7 +75,7 @@ class ContainerPage extends StatelessWidget implements RoutedWidgetInterface {
               return AdminScaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
-                  title: Text("YIoT CV-2SE"),
+                  title: Text("YIoT Danko"),
                   centerTitle: true,
                 ),
                 sideBar: SideBar(

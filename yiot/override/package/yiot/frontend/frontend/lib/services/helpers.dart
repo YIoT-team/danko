@@ -51,7 +51,7 @@ class YIoTServiceHelpers {
 
   // ---------------------------------------------------------------------------
   //
-  //  CV-2SE documentation
+  //  Danko documentation
   //
   static String wgAddHelpURL() => "https://docs.yiot.dev/docs/cv2se-faq#add-wireguard-connection";
 }
