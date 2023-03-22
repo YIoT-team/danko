@@ -1,0 +1,7 @@
+config main 'provision'
+	option active 1
+	option mtd '/yiot-mtd.dat'
+	option netif 'br-lan'
+	option manufacturer 'YIoT'
+	option model 'CV-2SE'
+	option serial '0123456789'

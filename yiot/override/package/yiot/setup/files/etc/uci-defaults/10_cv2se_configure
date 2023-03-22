@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# DHCP Network
+uci del dhcp.lan.ra_slaac
+uci del network.lan.ipaddr
+uci del network.lan.netmask
+uci del network.lan.gateway
+uci del network.lan.ip6assign
+uci set network.lan.proto='dhcp'
+
+# Set Host Name
+uci set system.@system[0].hostname="CV-2SE"
+
+uci commit
+
+
+exit 0
