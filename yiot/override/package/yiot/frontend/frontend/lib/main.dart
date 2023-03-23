@@ -33,7 +33,7 @@ import 'package:yiot_portal/pages/container/container-page.dart';
 import 'package:yiot_portal/pages/login-page.dart';
 import 'package:yiot_portal/pages/home-page.dart';
 
-import 'package:yiot_portal/pages/data/flow-page.dart';
+import 'package:yiot_portal/pages/data/yiot-flow-page.dart';
 
 import 'package:yiot_portal/pages/vpn/vpn-server-page.dart';
 import 'package:yiot_portal/pages/vpn/vpn-client-page.dart';
