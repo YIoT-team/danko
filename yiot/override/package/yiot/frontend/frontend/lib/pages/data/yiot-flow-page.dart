@@ -17,7 +17,6 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'dart:convert' show json;
 import 'package:flutter/material.dart';
 import 'package:yiot_portal/pages/data/helpers/text-menu.dart';
 import 'package:yiot_portal/pages/data/helpers/element-settings-menu.dart';
@@ -30,7 +29,6 @@ import 'package:yiot_portal/controllers/yiot-flow-controller.dart';
 
 import 'package:yiot_portal/theme/theme.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
-
 
 // -----------------------------------------------------------------------------
 class DataFlowPage extends StatefulWidget {
@@ -80,7 +78,6 @@ class _DataFlowPageState extends State<DataFlowPage> {
         backgroundColor: Colors.white,
         appBar: appBar,
         sideBar: SideBar(
-          footer: settings,
           width: 200,
           backgroundColor: Colors.white,
           activeBackgroundColor: Colors.white,
@@ -108,47 +105,44 @@ class _DataFlowPageState extends State<DataFlowPage> {
             }
           },
         ),
-        body: SingleChildScrollView(
-          child: SizedBox(
-            height: 2000,
-            width: 2000,
-            child: Container(
-              constraints: const BoxConstraints.expand(),
-              child: FlowChart(
-                dashboard: _dashboard,
-                onDashboardTapped: ((context, position) {
-                  debugPrint('Dashboard tapped $position');
-                  setState(() {
-                    print(">>> HIDE SETTINGS VIEW");
-                    selectedId = 0;
-                  });
-                }),
-                onDashboardLongtTapped: ((context, position) {
-                  debugPrint('Dashboard long tapped $position');
-                }),
-                onElementLongPressed: (context, position, element) {
-                  debugPrint('Element with "${element.text}" text '
-                      'long pressed');
-                },
-                onElementPressed: (context, position, element) {
-                  debugPrint('Element with "${element.text}" text pressed');
-                  // setState(() {
-                  //   selectedId = 1;
-                  // });
-                  _displayElementMenu(context, position, element);
-                },
-                onHandlerPressed: (context, position, handler, element) {
-                  debugPrint('handler pressed: position $position '
-                      'handler $handler" of element $element');
-                  _displayHandlerMenu(position, handler, element);
-                },
-                onHandlerLongPressed: (context, position, handler, element) {
-                  debugPrint('handler long pressed: position $position '
-                      'handler $handler" of element $element');
-                },
+        body: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  height: 2000,
+                  width: 2000,
+                  child: Container(
+                    constraints: const BoxConstraints.expand(),
+                    child: FlowChart(
+                      dashboard: _dashboard,
+                      onDashboardTapped: ((context, position) {
+                        debugPrint('Dashboard tapped $position');
+                        setState(() {
+                          selectedId = 0;
+                        });
+                      }),
+                      onElementPressed: (context, position, element) {
+                        debugPrint(
+                            'Element with "${element.text}" text pressed');
+                        setState(() {
+                          selectedId = 1;
+                        });
+                        // _displayElementMenu(context, position, element);
+                      },
+                      onHandlerPressed: (context, position, handler, element) {
+                        debugPrint('handler pressed: position $position '
+                            'handler $handler" of element $element');
+                        _displayHandlerMenu(position, handler, element);
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+            Container(child: settings),
+          ],
         ),
       ),
     );
