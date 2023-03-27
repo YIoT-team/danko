@@ -51,14 +51,14 @@ class YIoTSerialModel extends YIoTFlowComponentBase {
         );
 
   @override
-  String name() => wrappedBaseName() + " ${device}";
+  String name() => wrappedBaseName() + "\n${device}";
 
   @override
-  Map<String, dynamic> _toJson() => {
+  Map<String, dynamic> toMapInternal() => {
         _DEVICE_FIELD: device,
         _SPEED_FIELD: speed,
         _FORMAT_FIELD: format,
-        _PROTOCOL_FIELD: protocol,
+        _PROTOCOL_FIELD: protocol.toString(),
       };
 
   @override

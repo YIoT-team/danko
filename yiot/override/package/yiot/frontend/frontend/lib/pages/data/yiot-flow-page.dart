@@ -22,6 +22,9 @@ import 'package:yiot_portal/pages/data/helpers/text-menu.dart';
 import 'package:yiot_portal/pages/data/helpers/element-settings-menu.dart';
 import 'package:yiot_portal/pages/data/helpers/yiot-flow-menu.dart';
 import 'package:yiot_portal/pages/data/params/yiot-in-ip-params.dart';
+import 'package:yiot_portal/pages/data/params/yiot-params-editor.dart';
+import 'package:yiot_portal/pages/data/params/yiot-connection-editor.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
 import 'package:flutter_flow_chart/flutter_flow_chart.dart';
 import 'package:star_menu/star_menu.dart';
 
@@ -41,8 +44,10 @@ class DataFlowPage extends StatefulWidget {
 // -----------------------------------------------------------------------------
 class _DataFlowPageState extends State<DataFlowPage> {
   final _dashboard = Dashboard();
-  late final _flowController;
-  int selectedId = 0;
+  late final YIoTFlowController _flowController;
+  YIoTFlowComponentBase? selectedElement;
+  Handler? selectedConnection;
+  FlowElement? selectedConnectionOwner;
 
   _DataFlowPageState() {
     _flowController = YIoTFlowController(dashboard: _dashboard);
@@ -56,10 +61,16 @@ class _DataFlowPageState extends State<DataFlowPage> {
 
     Widget? settings;
 
-    if (selectedId != 0) {
-      print(">>> ADD SETTINGS VIEW");
-      settings = YIoTInputIpParams();
-      print(settings);
+    if (selectedElement != null) {
+      settings = YIoTParamEditor(
+          controller: _flowController,
+          model: selectedElement!,
+          body: YIoTInputIpParams());
+    } else if (selectedConnection != null && selectedConnectionOwner != null) {
+      settings = YIoTConnectionEditor(
+          controller: _flowController,
+          element: selectedConnectionOwner!,
+          handler: selectedConnection!);
     }
 
     if (isMobile) {
@@ -118,23 +129,24 @@ class _DataFlowPageState extends State<DataFlowPage> {
                     child: FlowChart(
                       dashboard: _dashboard,
                       onDashboardTapped: ((context, position) {
-                        debugPrint('Dashboard tapped $position');
                         setState(() {
-                          selectedId = 0;
+                          selectedElement = null;
+                          selectedConnection = null;
+                          selectedConnectionOwner = null;
                         });
                       }),
                       onElementPressed: (context, position, element) {
-                        debugPrint(
-                            'Element with "${element.text}" text pressed');
                         setState(() {
-                          selectedId = 1;
+                          selectedElement =
+                              _flowController.getModel(element.id);
                         });
-                        // _displayElementMenu(context, position, element);
                       },
                       onHandlerPressed: (context, position, handler, element) {
-                        debugPrint('handler pressed: position $position '
-                            'handler $handler" of element $element');
-                        _displayHandlerMenu(position, handler, element);
+                        setState(() {
+                          selectedElement = null;
+                          selectedConnection = handler;
+                          selectedConnectionOwner = element;
+                        });
                       },
                     ),
                   ),
@@ -144,114 +156,6 @@ class _DataFlowPageState extends State<DataFlowPage> {
             Container(child: settings),
           ],
         ),
-      ),
-    );
-  }
-
-  //*********************
-  //* POPUP MENUS
-  //*********************
-
-  /// Display a drop down menu when tapping on a handler
-  _displayHandlerMenu(
-    Offset position,
-    Handler handler,
-    FlowElement element,
-  ) {
-    StarMenuOverlay.displayStarMenu(
-      context,
-      StarMenu(
-        params: StarMenuParameters(
-          shape: MenuShape.linear,
-          openDurationMs: 60,
-          linearShapeParams: const LinearShapeParams(
-            angle: 270,
-            space: 10,
-          ),
-          onHoverScale: 1.1,
-          useTouchAsCenter: true,
-          centerOffset: position -
-              Offset(
-                _dashboard.dashboardSize.width / 2,
-                _dashboard.dashboardSize.height / 2,
-              ),
-        ),
-        onItemTapped: (index, controller) => controller.closeMenu!(),
-        items: [
-          FloatingActionButton(
-            child: const Icon(Icons.delete),
-            onPressed: () =>
-                _dashboard.removeElementConnection(element, handler),
-          )
-        ],
-        parentContext: context,
-      ),
-    );
-  }
-
-  /// Display a drop down menu when tapping on an element
-  _displayElementMenu(
-    BuildContext context,
-    Offset position,
-    FlowElement element,
-  ) {
-    StarMenuOverlay.displayStarMenu(
-      context,
-      StarMenu(
-        params: StarMenuParameters(
-          shape: MenuShape.linear,
-          openDurationMs: 60,
-          linearShapeParams: const LinearShapeParams(
-            angle: 270,
-            alignment: LinearAlignment.left,
-            space: 10,
-          ),
-          onHoverScale: 1.1,
-          centerOffset: position - const Offset(50, 0),
-          backgroundParams: const BackgroundParams(
-            backgroundColor: Colors.transparent,
-          ),
-          boundaryBackground: BoundaryBackground(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).cardColor,
-              boxShadow: kElevationToShadow[6],
-            ),
-          ),
-        ),
-        onItemTapped: (index, controller) {
-          if (!(index == 5 || index == 2)) {
-            controller.closeMenu!();
-          }
-        },
-        items: [
-          Text(
-            element.text,
-            style: const TextStyle(fontWeight: FontWeight.w900),
-          ),
-          InkWell(
-            onTap: () => _dashboard.removeElement(element),
-            child: const Text('Delete'),
-          ),
-          TextMenu(element: element),
-          InkWell(
-            onTap: () {
-              _dashboard.removeElementConnections(element);
-            },
-            child: const Text('Remove all connections'),
-          ),
-          InkWell(
-            onTap: () {
-              _dashboard.setElementResizable(element, true);
-            },
-            child: const Text('Resize'),
-          ),
-          ElementSettingsMenu(
-            element: element,
-          ),
-        ],
-        parentContext: context,
       ),
     );
   }

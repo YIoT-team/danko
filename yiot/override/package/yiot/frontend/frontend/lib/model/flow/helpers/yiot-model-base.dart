@@ -61,20 +61,20 @@ abstract class YIoTFlowComponentBase {
   });
 
   // Abstract functions
-  Map<String, dynamic> _toJson();
+  Map<String, dynamic> toMapInternal();
   bool fromJson(Map<String, dynamic> json);
   bool verify();
   String name();
 
   // Convert to Json
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     Map<String, dynamic> res = {
       YIOT_COMPONENT_ID_FIELD: id,
       YIOT_COMPONENT_TYPE_FIELD: type.toString(),
       YIOT_COMPONENT_DIRECTION_FIELD: direction.toString(),
     };
 
-    res.addAll(_toJson());
+    res.addAll(toMapInternal());
 
     return res;
   }

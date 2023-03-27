@@ -200,6 +200,12 @@ class YIoTFlowController {
 
   // ---------------------------------------------------------------------------
   //
+  //  Get model
+  //
+  YIoTFlowComponentBase? getModel(String id) => _model.get(id);
+
+  // ---------------------------------------------------------------------------
+  //
   //  Process command
   //
   Future<bool> processCommand(YIoTFlowAction action, dynamic data) async {

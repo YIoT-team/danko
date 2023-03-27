@@ -17,46 +17,49 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'dart:convert';
+import 'package:flutter/material.dart';
+
 import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/controllers/yiot-flow-controller.dart';
 
-class YIoTComponentsModel {
-  var _components = Map<String, YIoTFlowComponentBase>();
+import 'package:yiot_portal/components/ui/yiot-title.dart';
 
-  bool add(YIoTFlowComponentBase component) {
-    _components[component.id] = component;
-    return true;
-  }
+import 'package:flutter_flow_chart/flutter_flow_chart.dart';
 
-  bool remove(YIoTFlowComponentBase component) {
-    return null != _components.remove(component.id);
-  }
+// -----------------------------------------------------------------------------
 
-  YIoTFlowComponentBase? get(String id) {
-    if (_components.containsKey(id)) {
-      return _components[id];
-    }
-    return null;
-  }
+class YIoTConnectionEditor extends StatelessWidget {
+  late final YIoTFlowController controller;
+  late final Handler handler;
+  late final FlowElement element;
 
-  bool update(YIoTFlowComponentBase component) {
-    _components[component.id] = component;
-    return true;
-  }
+  YIoTConnectionEditor({
+    super.key,
+    required this.controller,
+    required this.handler,
+    required this.element,
+  });
 
-  String toJson() {
-    var map = <String, dynamic>{};
-    _components.forEach((key, value) {
-      map[key] = value.toMap();
-    });
-
-    var spaces = ' ' * 2;
-    var encoder = JsonEncoder.withIndent(spaces);
-    return encoder.convert(map);
-  }
-
-  bool fromJson(Map<String, dynamic> json) {
-    return true;
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      YIoTTitle(title: "Connection"),
+      Divider(
+        color: Colors.black,
+      ),
+      Row(
+        children: [
+          FloatingActionButton(
+            child: const Icon(Icons.delete),
+            mini: true,
+            backgroundColor: Colors.redAccent,
+            onPressed: () {
+              controller.dashboard.removeElementConnection(element, handler);
+            },
+          ),
+        ],
+      ),
+    ]);
   }
 }
 

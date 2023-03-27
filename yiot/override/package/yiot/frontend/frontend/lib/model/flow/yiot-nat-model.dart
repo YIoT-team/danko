@@ -33,7 +33,7 @@ class YIoTNatModel extends YIoTFlowComponentBase {
   String name() => wrappedBaseName();
 
   @override
-  Map<String, dynamic> _toJson() => {};
+  Map<String, dynamic> toMapInternal() => {};
 
   @override
   bool fromJson(Map<String, dynamic> json) {

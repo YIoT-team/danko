@@ -49,10 +49,10 @@ class YIoTIpModel extends YIoTFlowComponentBase {
   String name() => "${ip}:${port}";
 
   @override
-  Map<String, dynamic> _toJson() => {
+  Map<String, dynamic> toMapInternal() => {
         _IP_FIELD: ip,
         _PORT_FIELD: port,
-        _PROTOCOL_FIELD: protocol,
+        _PROTOCOL_FIELD: protocol.toString(),
       };
 
   @override
