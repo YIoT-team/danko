@@ -18,7 +18,15 @@
 //  ────────────────────────────────────────────────────────────
 
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
+
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/model/flow/yiot-ip-model.dart';
+import 'package:yiot_portal/model/flow/yiot-serial-model.dart';
+import 'package:yiot_portal/model/flow/yiot-nat-model.dart';
+import 'package:yiot_portal/model/flow/yiot-components-model.dart';
+
 import 'package:yiot_portal/services/luci.dart';
 import 'package:yiot_portal/session/yiot-session.dart';
 import 'package:flutter_flow_chart/flutter_flow_chart.dart';
@@ -51,8 +59,10 @@ enum YIoTFlowAction {
 //
 class YIoTFlowController {
   late Dashboard dashboard;
+  final _model = YIoTComponentsModel();
 
   static const _FLOW_FILE = "/etc/yiot-flow.json";
+  static const _FLOW_PARAMS_FILE = "/etc/yiot-flow-params.json";
   static const _ELEMENT_BASE_SIZE = Size(200, 70);
   static const _ELEMENT_INPUT_COLOR = Colors.green;
   static const _ELEMENT_OUTPUT_COLOR = Colors.redAccent;
@@ -144,16 +154,47 @@ class YIoTFlowController {
   //
   //  Add component
   //
-  Future<bool> _add(String title, Color color, List<Handler> connectors) async {
-    // Add Element to dashboard
-    dashboard.addElement(FlowElement(
+  Future<bool> _add(YIoTFlowComponentBase model) async {
+    // Prepare component parameters
+    late final Color color;
+    var connectors = <Handler>[];
+    if (model.direction == YIoTFlowDirection.kInput) {
+      color = _ELEMENT_INPUT_COLOR;
+      connectors.add(Handler.rightCenter);
+    } else if (model.direction == YIoTFlowDirection.kOutput) {
+      color = _ELEMENT_OUTPUT_COLOR;
+      connectors.add(Handler.leftCenter);
+    } else {
+      color = YIoTFlowController._ELEMENT_PROCESSING_COLOR;
+      connectors.add(Handler.rightCenter);
+      connectors.add(Handler.leftCenter);
+    }
+
+    // Create element
+    final el = FlowElement(
       size: _ELEMENT_BASE_SIZE,
-      text: title,
+      text: model.name(),
       borderColor: color,
       kind: ElementKind.rectangle,
       handlers: connectors,
-    ));
+    );
 
+    // Set ID
+    el.id = model.id;
+
+    // Add Element to dashboard
+    dashboard.addElement(el);
+
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //  Delete component
+  //
+  Future<bool> delete(FlowElement element) async {
+    // Delete Element from dashboard
+    dashboard.removeElement(element);
     return true;
   }
 
@@ -162,6 +203,10 @@ class YIoTFlowController {
   //  Process command
   //
   Future<bool> processCommand(YIoTFlowAction action, dynamic data) async {
+    // Prepare ID
+    final id = const Uuid().v4();
+    ;
+
     // Save command
     if (action == YIoTFlowAction.operationSave) {
       return this._save(dashboard.prettyJson());
@@ -182,27 +227,45 @@ class YIoTFlowController {
 
     // Add IP : Port input
     if (action == YIoTFlowAction.addInputIpPort) {
-      return _add("[ip]", _ELEMENT_INPUT_COLOR, <Handler>[Handler.rightCenter]);
+      final data = YIoTIpModel(id: id, direction: YIoTFlowDirection.kInput);
+      if (_model.add(data)) {
+        return _add(data);
+      }
+      return true;
     }
 
     // Add Serial input
     if (action == YIoTFlowAction.addInputSerial) {
-      return _add("[serial]", _ELEMENT_INPUT_COLOR, <Handler>[Handler.rightCenter]);
+      final data = YIoTSerialModel(id: id, direction: YIoTFlowDirection.kInput);
+      if (_model.add(data)) {
+        return _add(data);
+      }
+      return true;
     }
 
     // Add IP : Port output
     if (action == YIoTFlowAction.addOutputIpPort) {
-      return _add("[ip]", _ELEMENT_OUTPUT_COLOR, <Handler>[Handler.leftCenter]);
+      final data = YIoTIpModel(id: id, direction: YIoTFlowDirection.kOutput);
+      if (_model.add(data)) {
+        return _add(data);
+      }
+      return true;
     }
 
     // Add Serial input
     if (action == YIoTFlowAction.addOutputSerial) {
-      return _add("[serial]", _ELEMENT_OUTPUT_COLOR, <Handler>[Handler.leftCenter]);
+      final data = YIoTSerialModel(id: id, direction: YIoTFlowDirection.kOutput);
+      if (_model.add(data)) {
+        return _add(data);
+      }
     }
 
     // Add Forwarding
     if (action == YIoTFlowAction.addProcessingForwarding) {
-      return _add("[forward]", _ELEMENT_PROCESSING_COLOR, <Handler>[Handler.leftCenter, Handler.rightCenter]);
+      final data = YIoTNatModel(id: id);
+      if (_model.add(data)) {
+        return _add(data);
+      }
     }
 
     return false;
