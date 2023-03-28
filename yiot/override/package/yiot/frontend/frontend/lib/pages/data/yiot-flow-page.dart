@@ -18,16 +18,19 @@
 //  ────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import 'package:yiot_portal/pages/data/helpers/text-menu.dart';
-import 'package:yiot_portal/pages/data/helpers/element-settings-menu.dart';
+import 'package:yiot_portal/model/flow/yiot-ip-model.dart';
+import 'package:yiot_portal/model/flow/yiot-nat-model.dart';
+import 'package:yiot_portal/model/flow/yiot-serial-model.dart';
 import 'package:yiot_portal/pages/data/helpers/yiot-flow-menu.dart';
-import 'package:yiot_portal/pages/data/params/yiot-in-ip-params.dart';
+
+import 'package:yiot_portal/pages/data/params/yiot-ip-params.dart';
+import 'package:yiot_portal/pages/data/params/yiot-serial-params.dart';
+import 'package:yiot_portal/pages/data/params/yiot-nat-params.dart';
 import 'package:yiot_portal/pages/data/params/yiot-params-editor.dart';
 import 'package:yiot_portal/pages/data/params/yiot-connection-editor.dart';
+
 import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
 import 'package:flutter_flow_chart/flutter_flow_chart.dart';
-import 'package:star_menu/star_menu.dart';
-
 import 'package:yiot_portal/controllers/yiot-flow-controller.dart';
 
 import 'package:yiot_portal/theme/theme.dart';
@@ -62,10 +65,7 @@ class _DataFlowPageState extends State<DataFlowPage> {
     Widget? settings;
 
     if (selectedElement != null) {
-      settings = YIoTParamEditor(
-          controller: _flowController,
-          model: selectedElement!,
-          body: YIoTInputIpParams());
+      settings = _settingsForElement(selectedElement!);
     } else if (selectedConnection != null && selectedConnectionOwner != null) {
       settings = YIoTConnectionEditor(
           controller: _flowController,
@@ -139,6 +139,8 @@ class _DataFlowPageState extends State<DataFlowPage> {
                         setState(() {
                           selectedElement =
                               _flowController.getModel(element.id);
+                          selectedConnection = null;
+                          selectedConnectionOwner = null;
                         });
                       },
                       onHandlerPressed: (context, position, handler, element) {
@@ -157,6 +159,46 @@ class _DataFlowPageState extends State<DataFlowPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget? _settingsForElement(YIoTFlowComponentBase selectedElement) {
+    Widget? body;
+
+    // Settings for IP : Port
+    if (selectedElement.type == YIoTFlowComponent.kFlowComponentIP) {
+      body = YIoTIpParams(
+        model: selectedElement! as YIoTIpModel,
+        onUpdate: (model) {
+          _flowController.update(model);
+        },
+      );
+    }
+
+    // Settings for Serial
+    if (selectedElement.type == YIoTFlowComponent.kFlowComponentSerial) {
+      body = YIoTSerialParams(
+        model: selectedElement! as YIoTSerialModel,
+        onUpdate: (model) {
+          _flowController.update(model);
+        },
+      );
+    }
+
+    // Settings for NAT
+    if (selectedElement.type == YIoTFlowComponent.kFlowComponentNAT) {
+      body = YIoTNatParams(
+        model: selectedElement! as YIoTNatModel,
+        onUpdate: (model) {
+          _flowController.update(model);
+        },
+      );
+    }
+
+    return YIoTParamEditor(
+        controller: _flowController,
+        model: selectedElement!,
+        body: body!,
     );
   }
 }

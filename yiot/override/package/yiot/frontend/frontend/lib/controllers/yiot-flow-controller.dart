@@ -206,6 +206,20 @@ class YIoTFlowController {
 
   // ---------------------------------------------------------------------------
   //
+  //  Update element
+  //
+  bool update(YIoTFlowComponentBase model) {
+    _model.update(model);
+    dashboard.elements.forEach((element) {
+      if (element.id == model.id) {
+        element.setText(model.name());
+      }
+    });
+    return true;
+  }
+
+  // ---------------------------------------------------------------------------
+  //
   //  Process command
   //
   Future<bool> processCommand(YIoTFlowAction action, dynamic data) async {

@@ -17,74 +17,37 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:flutter/material.dart';
+
+import 'package:yiot_portal/components/ui/yiot-dropdown.dart';
 import 'package:yiot_portal/model/flow/helpers/yiot-protocols.dart';
 
-class YIoTSerialModel extends YIoTFlowComponentBase {
-  static const _DEVICE_FIELD = "device";
-  static const _SPEED_FIELD = "speed";
-  static const _FORMAT_FIELD = "format";
-  static const _PROTOCOL_FIELD = "proto";
+import 'package:yiot_portal/model/flow/yiot-nat-model.dart';
 
-  static const _DEVICE_DEFAULT = "/dev/ttyUSB0";
-  static const _SPEED_DEFAULT = 115200;
-  static const _FORMAT_DEFAULT = "8-N-1";
-  static const _PROTOCOL_DEFAULT = YIoTSerialProtocol.kModbusRTU;
+import 'package:validators/validators.dart';
 
-  late String device;
-  late int speed;
-  late String format;
-  late YIoTSerialProtocol protocol;
+// -----------------------------------------------------------------------------
 
-  YIoTSerialModel({
-    required String id,
-    required YIoTFlowDirection direction,
-    this.device = _DEVICE_DEFAULT,
-    this.speed = _SPEED_DEFAULT,
-    this.format = _FORMAT_DEFAULT,
-    this.protocol = _PROTOCOL_DEFAULT,
-  }) : super(
-          id: id,
-          type: YIoTFlowComponent.kFlowComponentSerial,
-          direction: direction,
-          baseName: 'SERIAL',
-        );
+typedef OnNatParamUpdated = void Function(YIoTNatModel model);
+
+// -----------------------------------------------------------------------------
+
+class YIoTNatParams extends StatelessWidget {
+  late YIoTNatModel model;
+  late OnNatParamUpdated onUpdate;
+
+  double _componentWidth = 350.0;
+
+  YIoTNatParams({
+    super.key,
+    required this.model,
+    required this.onUpdate,
+  });
 
   @override
-  String name() => wrappedBaseName() + "\n${device}";
-
-  @override
-  Map<String, dynamic> toMapInternal() => {
-        _DEVICE_FIELD: device,
-        _SPEED_FIELD: speed,
-        _FORMAT_FIELD: format,
-        _PROTOCOL_FIELD: protocol.toString(),
-      };
-
-  @override
-  bool fromJson(Map<String, dynamic> json) {
-    try {
-      // Get Device
-      device = json[_DEVICE_FIELD];
-
-      // Get Speed
-      speed = json[_SPEED_FIELD];
-
-      // Get Format
-      format = json[_FORMAT_FIELD];
-
-      // Get Protocol
-      protocol = YIoTSerialProtocol.values.firstWhere(
-          (e) => e.toString() == json[YIoTSerialModel._PROTOCOL_FIELD]);
-
-      return true;
-    } catch (_) {}
-
-    return false;
+  Widget build(BuildContext context) {
+    return SizedBox(width: _componentWidth,);
   }
-
-  @override
-  bool verify() => true;
 }
 
 // -----------------------------------------------------------------------------

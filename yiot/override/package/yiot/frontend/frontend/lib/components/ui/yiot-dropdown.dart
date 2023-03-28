@@ -27,35 +27,22 @@ class YIoTDropDown extends StatefulWidget {
   List<String> items;
   OnIndexChanged onChanged;
   _YIoTDropDownState? state;
+  int index;
 
-  YIoTDropDown({required this.items, required this.onChanged});
+  YIoTDropDown(
+      {required this.items, required this.onChanged, this.index = 0});
 
   @override
-  State<YIoTDropDown> createState() {
-    if (state == null) {
-      state = new _YIoTDropDownState(items: items, onChanged: onChanged);
-    }
-    return state!;
-  }
-
-  int currentValue() {
-    return state?.currentIndex ?? -1;
-  }
+  State<YIoTDropDown> createState() => _YIoTDropDownState();
 }
 
 class _YIoTDropDownState extends State<YIoTDropDown> {
-  List<String> items;
-  OnIndexChanged onChanged;
-
-  int currentIndex = 0;
   Color _color = Colors.grey;
-
-  _YIoTDropDownState({required this.items, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
-      value: items.elementAt(currentIndex),
+      value: widget.items.elementAt(widget.index),
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
       isExpanded: true,
@@ -65,13 +52,12 @@ class _YIoTDropDownState extends State<YIoTDropDown> {
         color: _color,
       ),
       onChanged: (String? value) {
-        // This is called when the user selects an item.
+        widget.index = widget.items.indexOf(value!);
+        widget.onChanged(widget.index);
         setState(() {
-          currentIndex = items.indexOf(value!);
         });
-        onChanged(currentIndex);
       },
-      items: items.map<DropdownMenuItem<String>>((String value) {
+      items: widget.items.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
