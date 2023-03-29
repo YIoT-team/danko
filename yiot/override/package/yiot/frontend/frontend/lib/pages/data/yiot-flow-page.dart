@@ -54,6 +54,11 @@ class _DataFlowPageState extends State<DataFlowPage> {
 
   _DataFlowPageState() {
     _flowController = YIoTFlowController(dashboard: _dashboard);
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _flowController.load().then((value) {
+        setState(() {});
+      });
+    });
   }
 
   @override

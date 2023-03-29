@@ -86,18 +86,29 @@ class YIoTFlowController {
   //
   //  Save YIoT Flow
   //
-  Future<bool> _save(String data) async {
+  Future<bool> save() async {
+
+    // TODO: USE SINGLE DATA FILE
+
     // Get token
     final token = await _token();
+
+    // Prepare params
+    final flow = dashboard.prettyJson();
+    final params = _model.toJson();
 
     // base64 codec
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
 
-    // Encode to base 64 and save file
-    final res = await LuciService.fsSave(
-        token, _FLOW_FILE, stringToBase64.encode(data));
+    // Encode to base 64 and save flow file
+    final resFlow = await LuciService.fsSave(
+        token, _FLOW_FILE, stringToBase64.encode(flow));
 
-    return res.error.isEmpty;
+    // Encode to base 64 and save params file
+    final resParams = await LuciService.fsSave(
+        token, _FLOW_PARAMS_FILE, stringToBase64.encode(params));
+
+    return resFlow.error.isEmpty && resParams.error.isEmpty;
   }
 
   // ---------------------------------------------------------------------------
@@ -129,11 +140,33 @@ class YIoTFlowController {
   //
   //  Load YIoT Flow
   //
-  Future<bool> _load() async {
+  Future<bool> load() async {
+
+    // TODO: USE SINGLE DATA FILE
+
     // Get token
     final token = await _token();
 
-    // Load file data
+    // base64 codec
+    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+
+    // Load params
+    final resParams = await LuciService.fsLoad(token, _FLOW_PARAMS_FILE);
+
+    // Check for an error
+    if (resParams.data.isEmpty) {
+      return false;
+    }
+
+    // Decode base64 and return
+    final jsonParamsString = stringToBase64.decode(resParams.data);
+
+    // Apply model params
+    _model.fromJson(json.decode(jsonParamsString));
+
+    // ---------------
+
+    // Load float data
     final res = await LuciService.fsLoad(token, _FLOW_FILE);
 
     // Check for an error
@@ -141,12 +174,10 @@ class YIoTFlowController {
       return false;
     }
 
-    // base64 codec
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-
-    // Decode base64 and return
+    // Decode base64
     final jsonString = stringToBase64.decode(res.data);
 
+    // Apply
     return _apply(jsonString);
   }
 
@@ -229,7 +260,7 @@ class YIoTFlowController {
 
     // Save command
     if (action == YIoTFlowAction.operationSave) {
-      return this._save(dashboard.prettyJson());
+      return this.save();
     }
 
     // Import command
