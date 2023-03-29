@@ -25,7 +25,7 @@ import 'package:yiot_portal/model/flow/yiot-nat-model.dart';
 //
 //  YIoT Flow component factory
 //
-abstract class YIoTFlowComponentFactory {
+class YIoTFlowComponentFactory {
   static YIoTFlowComponentBase? fromJson(Map<String, dynamic> json) {
     try {
       // Get component ID
@@ -35,11 +35,11 @@ abstract class YIoTFlowComponentFactory {
       late final direction;
       final directionStr =
           json[YIoTFlowComponentBase.YIOT_COMPONENT_DIRECTION_FIELD];
-      if (directionStr == YIoTFlowDirection.kInput) {
+      if (directionStr == YIoTFlowDirection.kInput.toString()) {
         direction = YIoTFlowDirection.kInput;
-      } else if (directionStr == YIoTFlowDirection.kOutput) {
+      } else if (directionStr == YIoTFlowDirection.kOutput.toString()) {
         direction = YIoTFlowDirection.kOutput;
-      } else if (directionStr == YIoTFlowDirection.kMiddle) {
+      } else if (directionStr == YIoTFlowDirection.kMiddle.toString()) {
         direction = YIoTFlowDirection.kMiddle;
       } else {
         print("Cannot load a component, due to unknown direction");

@@ -19,6 +19,7 @@
 
 import 'dart:convert';
 import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-factory.dart';
 
 class YIoTComponentsModel {
   var _components = Map<String, YIoTFlowComponentBase>();
@@ -56,6 +57,17 @@ class YIoTComponentsModel {
   }
 
   bool fromJson(Map<String, dynamic> json) {
+    var newComponents = Map<String, YIoTFlowComponentBase>();
+
+    json.forEach((key, value) {
+      final element = YIoTFlowComponentFactory.fromJson(value);
+      if (element != null) {
+        newComponents[key] = element;
+      }
+    });
+
+    _components = newComponents;
+
     return true;
   }
 }
