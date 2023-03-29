@@ -17,53 +17,58 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'package:flutter/material.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'dart:convert';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-factory.dart';
 
-typedef OnIndexChanged = void Function(int index);
+class YIoTComponentsModel {
+  var _components = Map<String, YIoTFlowComponentBase>();
 
-// -----------------------------------------------------------------------------
-class YIoTDropDown extends StatefulWidget {
-  List<String> items;
-  OnIndexChanged onChanged;
-  _YIoTDropDownState? state;
-  int index;
+  bool add(YIoTFlowComponentBase component) {
+    _components[component.id] = component;
+    return true;
+  }
 
-  YIoTDropDown(
-      {required this.items, required this.onChanged, this.index = 0});
+  bool remove(YIoTFlowComponentBase component) {
+    return null != _components.remove(component.id);
+  }
 
-  @override
-  State<YIoTDropDown> createState() => _YIoTDropDownState();
-}
+  YIoTFlowComponentBase? get(String id) {
+    if (_components.containsKey(id)) {
+      return _components[id];
+    }
+    return null;
+  }
 
-class _YIoTDropDownState extends State<YIoTDropDown> {
-  Color _color = Colors.grey;
+  bool update(YIoTFlowComponentBase component) {
+    _components[component.id] = component;
+    return true;
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: widget.items.elementAt(widget.index),
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      isExpanded: true,
-      style: TextStyle(color: _color, fontSize: 16.0),
-      underline: Container(
-        height: 1,
-        color: _color,
-      ),
-      onChanged: (String? value) {
-        widget.index = widget.items.indexOf(value!);
-        widget.onChanged(widget.index);
-        setState(() {
-        });
-      },
-      items: widget.items.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
+  String toJson() {
+    var map = <String, dynamic>{};
+    _components.forEach((key, value) {
+      map[key] = value.toMap();
+    });
+
+    var spaces = ' ' * 2;
+    var encoder = JsonEncoder.withIndent(spaces);
+    return encoder.convert(map);
+  }
+
+  bool fromJson(Map<String, dynamic> json) {
+    var newComponents = Map<String, YIoTFlowComponentBase>();
+
+    json.forEach((key, value) {
+      final element = YIoTFlowComponentFactory.fromJson(value);
+      if (element != null) {
+        newComponents[key] = element;
+      }
+    });
+
+    _components = newComponents;
+
+    return true;
   }
 }
 

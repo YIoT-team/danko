@@ -17,54 +17,65 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'package:flutter/material.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-protocols.dart';
 
-typedef OnIndexChanged = void Function(int index);
+class YIoTIpModel extends YIoTFlowComponentBase {
+  static const _IP_FIELD = "ip";
+  static const _PORT_FIELD = "port";
+  static const _PROTOCOL_FIELD = "proto";
 
-// -----------------------------------------------------------------------------
-class YIoTDropDown extends StatefulWidget {
-  List<String> items;
-  OnIndexChanged onChanged;
-  _YIoTDropDownState? state;
-  int index;
+  static const _IP_DEFAULT = "127.0.0.1";
+  static const _PORT_DEFAULT = 5000;
 
-  YIoTDropDown(
-      {required this.items, required this.onChanged, this.index = 0});
+  late String ip;
+  late int port;
+  late YIoTIpProtocol protocol;
 
-  @override
-  State<YIoTDropDown> createState() => _YIoTDropDownState();
-}
-
-class _YIoTDropDownState extends State<YIoTDropDown> {
-  Color _color = Colors.grey;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: widget.items.elementAt(widget.index),
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      isExpanded: true,
-      style: TextStyle(color: _color, fontSize: 16.0),
-      underline: Container(
-        height: 1,
-        color: _color,
-      ),
-      onChanged: (String? value) {
-        widget.index = widget.items.indexOf(value!);
-        widget.onChanged(widget.index);
-        setState(() {
-        });
-      },
-      items: widget.items.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
+  YIoTIpModel({
+    required String id,
+    required YIoTFlowDirection direction,
+    this.ip = _IP_DEFAULT,
+    this.port = _PORT_DEFAULT,
+    this.protocol = YIoTIpProtocol.kTCP,
+  }) : super(
+          id: id,
+          type: YIoTFlowComponent.kFlowComponentIP,
+          direction: direction,
+          baseName: 'IP',
         );
-      }).toList(),
-    );
+
+  @override
+  String name() => "${ip}:${port}";
+
+  @override
+  Map<String, dynamic> toMapInternal() => {
+        _IP_FIELD: ip,
+        _PORT_FIELD: port,
+        _PROTOCOL_FIELD: protocol.toString(),
+      };
+
+  @override
+  bool fromJson(Map<String, dynamic> json) {
+    try {
+      // Get IP
+      ip = json[_IP_FIELD];
+
+      // Get Port
+      port = json[_PORT_FIELD];
+
+      // Get Protocol
+      protocol = YIoTIpProtocol.values
+          .firstWhere((e) => e.toString() == json[YIoTIpModel._PROTOCOL_FIELD]);
+
+      return true;
+    } catch (_) {}
+
+    return false;
   }
+
+  @override
+  bool verify() => true;
 }
 
 // -----------------------------------------------------------------------------

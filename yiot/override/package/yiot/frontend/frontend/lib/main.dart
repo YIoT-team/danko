@@ -33,7 +33,7 @@ import 'package:yiot_portal/pages/container/container-page.dart';
 import 'package:yiot_portal/pages/login-page.dart';
 import 'package:yiot_portal/pages/home-page.dart';
 
-import 'package:yiot_portal/pages/data/flow-page.dart';
+import 'package:yiot_portal/pages/data/yiot-flow-page.dart';
 
 import 'package:yiot_portal/pages/vpn/vpn-server-page.dart';
 import 'package:yiot_portal/pages/vpn/vpn-client-page.dart';
@@ -44,11 +44,6 @@ import 'package:yiot_portal/pages/hardware/serial-page.dart';
 
 import 'package:yiot_portal/pages/luci-part-page.dart';
 import 'package:yiot_portal/pages/system/logs-page.dart';
-
-//
-//  Bloc's
-//
-import 'package:yiot_portal/bloc/yiot_provision_bloc.dart';
 
 // -----------------------------------------------------------------------------
 void main() {
@@ -151,14 +146,9 @@ class _YIoTPortalState extends State<YIoTPortal> {
             return YIoTSession();
           },
         ),
-        Provider(
-          create: (context) {
-            return YiotProvisionBloc();
-          },
-        ),
       ],
       child: MaterialApp(
-        onGenerateTitle: (BuildContext context) => "YIoT CV-2SE",
+        onGenerateTitle: (BuildContext context) => "YIoT Danko",
         debugShowCheckedModeBanner: false,
 
         // --- Theme ---

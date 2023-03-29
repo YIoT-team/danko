@@ -17,88 +17,37 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-part of 'yiot_provision_bloc.dart';
+import 'package:flutter/material.dart';
+
+import 'package:yiot_portal/components/ui/yiot-dropdown.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-protocols.dart';
+
+import 'package:yiot_portal/model/flow/yiot-nat-model.dart';
+
+import 'package:validators/validators.dart';
 
 // -----------------------------------------------------------------------------
-abstract class YiotProvisionEvent extends Equatable {
-  const YiotProvisionEvent();
 
-  @override
-  List<Object> get props => [];
-}
+typedef OnNatParamUpdated = void Function(YIoTNatModel model);
 
 // -----------------------------------------------------------------------------
-class YiotProvisionStoppedEvent extends YiotProvisionEvent {
 
-  YiotProvisionStoppedEvent();
+class YIoTNatParams extends StatelessWidget {
+  late YIoTNatModel model;
+  late OnNatParamUpdated onUpdate;
 
-  @override
-  List<Object> get props => [];
+  double _componentWidth = 350.0;
 
-  @override
-  String toString() => 'YIoT Provision stopped';
-}
-
-// -----------------------------------------------------------------------------
-class YiotProvisionWaitDeviceEvent extends YiotProvisionEvent {
-
-  YiotProvisionWaitDeviceEvent();
+  YIoTNatParams({
+    super.key,
+    required this.model,
+    required this.onUpdate,
+  });
 
   @override
-  List<Object> get props => [];
-
-  @override
-  String toString() => 'YIoT Device Wait';
-}
-
-// -----------------------------------------------------------------------------
-class YiotProvisionDeviceDetectedEvent extends YiotProvisionEvent {
-  @override
-  List<Object> get props => [];
-
-  @override
-  String toString() => 'YIoT Device Detected';
-}
-
-// -----------------------------------------------------------------------------
-class YiotProvisionInProgressEvent extends YiotProvisionEvent {
-
-  late final stream;
-
-  YiotProvisionInProgressEvent({required this.stream});
-
-  @override
-  List<Object> get props => [stream];
-
-  @override
-  String toString() => 'YIoT Provision in progress';
-}
-
-// -----------------------------------------------------------------------------
-class YiotProvisionDoneEvent
-    extends YiotProvisionEvent {
-
-  late final license;
-
-  YiotProvisionDoneEvent({required this.license});
-
-  @override
-  List<Object> get props => [license];
-
-  @override
-  String toString() => 'YIoT Provision done';
-}
-
-
-// -----------------------------------------------------------------------------
-class YiotProvisionErrorEvent
-    extends YiotProvisionEvent {
-
-  @override
-  List<Object> get props => [];
-
-  @override
-  String toString() => 'YIoT Provision Error';
+  Widget build(BuildContext context) {
+    return SizedBox(width: _componentWidth,);
+  }
 }
 
 // -----------------------------------------------------------------------------

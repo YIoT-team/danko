@@ -40,14 +40,13 @@ dependencies:
   rflutter_alert: ^2.0.4
   dbcrypt: ^2.0.0
   file_picker: ^5.2.2
-  pdf: ^3.6.4
-  qr_flutter: ^4.0.0
   random_password_generator: ^0.2.1
   flutter_flow_chart: ^1.0.0+1
   star_menu: ^3.1.2
   flutter_colorpicker: ^1.0.3
   shared_preferences: ^2.0.18
   webviewx: ^0.2.1
+  validators: ^3.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

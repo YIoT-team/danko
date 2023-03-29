@@ -17,56 +17,74 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-part of 'yiot_provision_bloc.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-protocols.dart';
 
-// -----------------------------------------------------------------------------
-abstract class YiotProvisionState extends Equatable {
-  const YiotProvisionState();
-}
+class YIoTSerialModel extends YIoTFlowComponentBase {
+  static const _DEVICE_FIELD = "device";
+  static const _SPEED_FIELD = "speed";
+  static const _FORMAT_FIELD = "format";
+  static const _PROTOCOL_FIELD = "proto";
 
-// -----------------------------------------------------------------------------
-class YiotProvisionStopped extends YiotProvisionState {
-  @override
-  List<Object> get props => [];
-}
+  static const _DEVICE_DEFAULT = "/dev/ttyUSB0";
+  static const _SPEED_DEFAULT = 115200;
+  static const _FORMAT_DEFAULT = "8-N-1";
+  static const _PROTOCOL_DEFAULT = YIoTSerialProtocol.kModbusRTU;
 
-// -----------------------------------------------------------------------------
-class YiotProvisionWaitDevice extends YiotProvisionState {
-  @override
-  List<Object> get props => [];
-}
+  late String device;
+  late int speed;
+  late String format;
+  late YIoTSerialProtocol protocol;
 
-// -----------------------------------------------------------------------------
-class YiotProvisionDeviceDetected extends YiotProvisionState {
-  @override
-  List<Object> get props => [];
-}
-
-// -----------------------------------------------------------------------------
-class YiotProvisionInProgress extends YiotProvisionState {
-  late final stream;
-
-  YiotProvisionInProgress({required this.stream});
-
-  @override
-  List<Object> get props => [stream];
-}
-
-// -----------------------------------------------------------------------------
-class YiotProvisionDone extends YiotProvisionState {
-
-  late final license;
-
-  YiotProvisionDone({required this.license});
+  YIoTSerialModel({
+    required String id,
+    required YIoTFlowDirection direction,
+    this.device = _DEVICE_DEFAULT,
+    this.speed = _SPEED_DEFAULT,
+    this.format = _FORMAT_DEFAULT,
+    this.protocol = _PROTOCOL_DEFAULT,
+  }) : super(
+          id: id,
+          type: YIoTFlowComponent.kFlowComponentSerial,
+          direction: direction,
+          baseName: 'SERIAL',
+        );
 
   @override
-  List<Object> get props => [license];
-}
+  String name() => wrappedBaseName() + "\n${device}";
 
-// -----------------------------------------------------------------------------
-class YiotProvisionError extends YiotProvisionState {
   @override
-  List<Object> get props => [];
+  Map<String, dynamic> toMapInternal() => {
+        _DEVICE_FIELD: device,
+        _SPEED_FIELD: speed,
+        _FORMAT_FIELD: format,
+        _PROTOCOL_FIELD: protocol.toString(),
+      };
+
+  @override
+  bool fromJson(Map<String, dynamic> json) {
+    try {
+      // Get Device
+      device = json[_DEVICE_FIELD];
+
+      // Get Speed
+      speed = json[_SPEED_FIELD];
+
+      // Get Format
+      format = json[_FORMAT_FIELD];
+
+      // Get Protocol
+      protocol = YIoTSerialProtocol.values.firstWhere(
+          (e) => e.toString() == json[YIoTSerialModel._PROTOCOL_FIELD]);
+
+      return true;
+    } catch (_) {}
+
+    return false;
+  }
+
+  @override
+  bool verify() => true;
 }
 
 // -----------------------------------------------------------------------------

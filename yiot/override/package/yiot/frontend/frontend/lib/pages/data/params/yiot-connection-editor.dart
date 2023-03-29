@@ -18,52 +18,48 @@
 //  ────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
-typedef OnIndexChanged = void Function(int index);
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/controllers/yiot-flow-controller.dart';
+
+import 'package:yiot_portal/components/ui/yiot-title.dart';
+
+import 'package:flutter_flow_chart/flutter_flow_chart.dart';
 
 // -----------------------------------------------------------------------------
-class YIoTDropDown extends StatefulWidget {
-  List<String> items;
-  OnIndexChanged onChanged;
-  _YIoTDropDownState? state;
-  int index;
 
-  YIoTDropDown(
-      {required this.items, required this.onChanged, this.index = 0});
+class YIoTConnectionEditor extends StatelessWidget {
+  late final YIoTFlowController controller;
+  late final Handler handler;
+  late final FlowElement element;
 
-  @override
-  State<YIoTDropDown> createState() => _YIoTDropDownState();
-}
-
-class _YIoTDropDownState extends State<YIoTDropDown> {
-  Color _color = Colors.grey;
+  YIoTConnectionEditor({
+    super.key,
+    required this.controller,
+    required this.handler,
+    required this.element,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: widget.items.elementAt(widget.index),
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      isExpanded: true,
-      style: TextStyle(color: _color, fontSize: 16.0),
-      underline: Container(
-        height: 1,
-        color: _color,
+    return Column(children: [
+      YIoTTitle(title: "Connection"),
+      Divider(
+        color: Colors.black,
       ),
-      onChanged: (String? value) {
-        widget.index = widget.items.indexOf(value!);
-        widget.onChanged(widget.index);
-        setState(() {
-        });
-      },
-      items: widget.items.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
+      Row(
+        children: [
+          FloatingActionButton(
+            child: const Icon(Icons.delete),
+            mini: true,
+            backgroundColor: Colors.redAccent,
+            onPressed: () {
+              controller.dashboard.removeElementConnection(element, handler);
+            },
+          ),
+        ],
+      ),
+    ]);
   }
 }
 

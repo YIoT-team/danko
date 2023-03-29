@@ -17,53 +17,62 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'package:flutter/material.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
+import 'package:yiot_portal/model/flow/yiot-ip-model.dart';
+import 'package:yiot_portal/model/flow/yiot-nat-model.dart';
 
-typedef OnIndexChanged = void Function(int index);
+// ---------------------------------------------------------------------------
+//
+//  YIoT Flow component factory
+//
+class YIoTFlowComponentFactory {
+  static YIoTFlowComponentBase? fromJson(Map<String, dynamic> json) {
+    try {
+      // Get component ID
+      final id = json[YIoTFlowComponentBase.YIOT_COMPONENT_ID_FIELD];
 
-// -----------------------------------------------------------------------------
-class YIoTDropDown extends StatefulWidget {
-  List<String> items;
-  OnIndexChanged onChanged;
-  _YIoTDropDownState? state;
-  int index;
+      // Get component direction
+      late final direction;
+      final directionStr =
+          json[YIoTFlowComponentBase.YIOT_COMPONENT_DIRECTION_FIELD];
+      if (directionStr == YIoTFlowDirection.kInput.toString()) {
+        direction = YIoTFlowDirection.kInput;
+      } else if (directionStr == YIoTFlowDirection.kOutput.toString()) {
+        direction = YIoTFlowDirection.kOutput;
+      } else if (directionStr == YIoTFlowDirection.kMiddle.toString()) {
+        direction = YIoTFlowDirection.kMiddle;
+      } else {
+        print("Cannot load a component, due to unknown direction");
+        return null;
+      }
 
-  YIoTDropDown(
-      {required this.items, required this.onChanged, this.index = 0});
+      // Get component type
+      final type = json[YIoTFlowComponentBase.YIOT_COMPONENT_TYPE_FIELD];
 
-  @override
-  State<YIoTDropDown> createState() => _YIoTDropDownState();
-}
-
-class _YIoTDropDownState extends State<YIoTDropDown> {
-  Color _color = Colors.grey;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: widget.items.elementAt(widget.index),
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      isExpanded: true,
-      style: TextStyle(color: _color, fontSize: 16.0),
-      underline: Container(
-        height: 1,
-        color: _color,
-      ),
-      onChanged: (String? value) {
-        widget.index = widget.items.indexOf(value!);
-        widget.onChanged(widget.index);
-        setState(() {
-        });
-      },
-      items: widget.items.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
+      // Input/Output - IP:Port
+      if (type == YIoTFlowComponent.kFlowComponentIP.toString()) {
+        var res = YIoTIpModel(
+          id: id,
+          direction: direction,
         );
-      }).toList(),
-    );
+        if (res.fromJson(json)) {
+          return res;
+        }
+      }
+
+      // Processing - NAT
+      if (type == YIoTFlowComponent.kFlowComponentNAT.toString()) {
+        var res = YIoTNatModel(
+          id: id,
+        );
+        if (res.fromJson(json)) {
+          return res;
+        }
+      }
+
+    } catch (_) {}
+
+    return null;
   }
 }
 
