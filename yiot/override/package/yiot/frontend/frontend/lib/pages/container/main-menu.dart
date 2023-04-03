@@ -118,6 +118,11 @@ class MainMenu {
       icon: Icons.auto_awesome,
       route: YIoTServiceHelpers.luciURL(),
     ),
+    AdminMenuItem(
+      title: 'Logout',
+      icon: Icons.logout,
+      route: '/login',
+    ),
   ];
 }
 

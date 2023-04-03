@@ -56,6 +56,12 @@ class _LoginPageState extends State<LoginPage> {
   String _password = "";
 
   @override
+  _LoginPageState() : super() {
+    final session = YIoTSession();
+    session.logout();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AdminScaffold(
       backgroundColor: Colors.white,

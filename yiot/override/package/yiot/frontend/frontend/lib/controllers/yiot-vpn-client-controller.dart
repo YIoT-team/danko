@@ -92,12 +92,11 @@ class YIoTVpnClientController {
       return false;
     }
 
-    // res = await LuciService.uciAdd(token, 'network.${vpn.networkName}.proto', vpn.protocol);
-    // if (!res.error.isEmpty) {
-    //   YIoTVpnClientController._dropChanges();
-    //   return false;
-    // }
-
+    res = await LuciService.uciAdd(token, 'network', vpn.networkName);
+    if (!res.error.isEmpty) {
+      YIoTVpnClientController._dropChanges();
+      return false;
+    }
 
     res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].description', vpn.description);
     if (!res.error.isEmpty) {
@@ -153,11 +152,12 @@ class YIoTVpnClientController {
       return false;
     }
 
-    // res = await LuciService.uciAddList(token, 'network.${vpn.interfaceName}.addresses', vpn.addresses);
-    // if (!res.error.isEmpty) {
-    //   YIoTVpnClientController._dropChanges();
-    //   return false;
-    // }
+    // uci add_list network.wg_yiot.addresses='10.221.17.4/32'
+    res = await LuciService.uciSet(token, 'network.${vpn.interfaceName}.addresses', vpn.addresses);
+    if (!res.error.isEmpty) {
+      YIoTVpnClientController._dropChanges();
+      return false;
+    }
 
     //
     //  Commit changes
