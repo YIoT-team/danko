@@ -17,18 +17,30 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-package main
-
-const (
-	Version = "0.1.0.1"
-)
-
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 //
-// main entry point.
+//  YIoT Flow IP Protocols enumeration
 //
-func main() {
-	print("GO BACKEND")
+enum YIoTIpProtocol {
+
+  kTCP,
+  kUDP,
+  kRTSP,
+  kModbusTCP,
+  kIpOther,
+
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+//
+//  YIoT Flow Serial Protocols enumeration
+//
+enum YIoTSerialProtocol {
+
+  kModbusRTU,
+  kModbusASCII,
+  kSerialOther,
+
+}
+
+// -----------------------------------------------------------------------------

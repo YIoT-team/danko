@@ -17,18 +17,31 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-package main
+import 'package:yiot_portal/model/flow/helpers/yiot-model-base.dart';
 
-const (
-	Version = "0.1.0.1"
-)
+class YIoTNatModel extends YIoTFlowComponentBase {
+  YIoTNatModel({
+    required String id,
+  }) : super(
+          id: id,
+          type: YIoTFlowComponent.kFlowComponentNAT,
+          direction: YIoTFlowDirection.kMiddle,
+          baseName: 'NAT',
+        );
 
-// ----------------------------------------------------------------------------
-//
-// main entry point.
-//
-func main() {
-	print("GO BACKEND")
+  @override
+  String name() => wrappedBaseName();
+
+  @override
+  Map<String, dynamic> toMapInternal() => {};
+
+  @override
+  bool fromJson(Map<String, dynamic> json) {
+    return true;
+  }
+
+  @override
+  bool verify() => true;
 }
 
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------

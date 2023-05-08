@@ -21,107 +21,90 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:yiot_portal/components/ui/yiot-icons.dart';
-import 'package:yiot_portal/services/helpers.dart';
+import 'package:yiot_portal/controllers/yiot-flow-controller.dart';
 
-class MainMenu {
+class YIoTFlowMenu {
   static List<AdminMenuItem> items = [
-
     //
-    //  Home page
-    //
-    AdminMenuItem(
-      title: 'Home',
-      icon: Icons.home,
-      route: '/',
-    ),
-
-    //
-    //  Data
+    //  Inputs
     //
     AdminMenuItem(
-      title: 'Data Flow',
-      icon: Icons.account_tree_outlined,
-      route: '/data/flow',
-    ),
-
-    //
-    //  VPN
-    //
-    AdminMenuItem(
-      title: 'VPN',
-      icon: YIoTIcons.vpn_lock,
+      title: 'Inputs',
+      icon: Icons.input,
       children: [
         AdminMenuItem(
-          title: 'Server',
-          icon: YIoTIcons.server,
-          route: YIoTServiceHelpers.wgServerURL(),
-        ),
-        AdminMenuItem(
-          title: 'Client',
-          icon: Icons.private_connectivity,
-          route: '/vpn/client',
-        ),
-      ],
-    ),
-
-    //
-    //  Hardware
-    //
-    AdminMenuItem(
-      title: 'Hardware',
-      icon: YIoTIcons.microchip,
-      children: [
-        AdminMenuItem(
-          title: 'Ethernet',
+          title: 'IP : Port',
           icon: YIoTIcons.ethernet,
-          route: '/hardware/ethernet',
-        ),
-        AdminMenuItem(
-          title: 'WiFi',
-          icon: Icons.wifi,
-          route: '/hardware/wifi',
+          route: YIoTFlowAction.addInputIpPort.toString(),
         ),
         AdminMenuItem(
           title: 'Serial',
           icon: Icons.settings_ethernet,
-          route: '/hardware/serial',
+          route: YIoTFlowAction.addInputSerial.toString(),
         ),
       ],
     ),
 
     //
-    //  System
+    //  Outputs
     //
     AdminMenuItem(
-      title: 'System',
-      icon: Icons.settings,
+      title: 'Outputs',
+      icon: Icons.output,
       children: [
         AdminMenuItem(
-          title: 'Terminal',
-          icon: Icons.keyboard_alt_outlined,
-          route: '/system/terminal',
+          title: 'IP : Port',
+          icon: YIoTIcons.ethernet,
+          route: YIoTFlowAction.addOutputIpPort.toString(),
         ),
         AdminMenuItem(
-          title: 'Logs',
-          icon: Icons.text_snippet_outlined,
-          route: '/system/logs',
-        ),
-        AdminMenuItem(
-          title: 'Reboot',
-          icon: Icons.restart_alt,
-          route: '/system/reboot',
+          title: 'Serial',
+          icon: Icons.settings_ethernet,
+          route: YIoTFlowAction.addOutputSerial.toString(),
         ),
       ],
     ),
+
+    //
+    //  Processing
+    //
     AdminMenuItem(
-      title: 'Advanced',
-      icon: Icons.auto_awesome,
-      route: YIoTServiceHelpers.luciURL(),
+      title: 'Processing',
+      icon: Icons.screen_rotation_alt,
+      children: [
+        AdminMenuItem(
+          title: 'Forwarding',
+          icon: YIoTIcons.forward,
+          route: YIoTFlowAction.addProcessingForwarding.toString(),
+        ),
+      ],
     ),
+
+    //
+    //  Save
+    //
     AdminMenuItem(
-      title: 'Logout',
-      icon: Icons.logout,
-      route: '/login',
+      title: 'Save',
+      icon: Icons.save,
+      route: YIoTFlowAction.operationSave.toString(),
+    ),
+
+    //
+    //  Download
+    //
+    AdminMenuItem(
+      title: 'Download',
+      icon: Icons.save_alt,
+      route: YIoTFlowAction.operationDownload.toString(),
+    ),
+
+    //
+    //  Upload
+    //
+    AdminMenuItem(
+      title: 'Upload',
+      icon: Icons.upload_file,
+      route: YIoTFlowAction.operationUpload.toString(),
     ),
   ];
 }

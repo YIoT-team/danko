@@ -9,7 +9,16 @@ uci del network.lan.ip6assign
 uci set network.lan.proto='dhcp'
 
 # Set Host Name
-uci set system.@system[0].hostname="CV-2SE"
+uci set system.@system[0].hostname="danko"
+
+# Switch to HTTP // TODO: remove it
+uci delete nginx._redirect2ssl
+uci delete nginx._lan.uci_manage_ssl
+uci delete nginx._lan.ssl_certificate
+uci delete nginx._lan.ssl_certificate_key
+uci delete nginx._lan.ssl_session_cache
+uci delete nginx._lan.ssl_session_timeout
+uci set nginx._lan.listen='80 default_server'
 
 uci commit
 
