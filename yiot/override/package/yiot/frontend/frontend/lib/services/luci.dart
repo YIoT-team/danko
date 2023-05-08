@@ -37,6 +37,8 @@ enum LuciCommand {
   uciDelAll("delete_all"),
   uciGet("get"),
   uciGetAll("get_all"),
+  uciAdd("add"),
+  uciAddList("add_list"),
 
   // File System
   fsLoad("readfile"),
@@ -151,7 +153,7 @@ class LuciService {
     // Get minimum number of parts
     for (var i = 0; i < min; i++) {
       var val = "";
-      if (components.length > i + 1) {
+      if (components.length > i) {
         val = components.elementAt(i);
       }
       params.add(val);
@@ -176,10 +178,38 @@ class LuciService {
     final url = urlWithToken(_ENDPOINT_UCI, token);
 
     // Prepare params
-    var params = _parse(param, 3, 3);
+    var params = _parse(param, 2, 3);
     params.add(value);
 
     return _rpcRequest(url, LuciCommand.uciSet, params);
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //  UCI add
+  //
+  static Future<LuciResponse> uciAdd(String token, String param, String value) async {
+    final url = urlWithToken(_ENDPOINT_UCI, token);
+
+    // Prepare params
+    var params = _parse(param, 1, 1);
+    params.add(value);
+
+    return _rpcRequest(url, LuciCommand.uciAdd, params);
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //  UCI add list
+  //
+  static Future<LuciResponse> uciAddList(String token, String param, String value) async {
+    final url = urlWithToken(_ENDPOINT_UCI, token);
+
+    // Prepare params
+    var params = _parse(param, 2, 3);
+    params.add(value);
+
+    return _rpcRequest(url, LuciCommand.uciAddList, params);
   }
 
   // ---------------------------------------------------------------------------

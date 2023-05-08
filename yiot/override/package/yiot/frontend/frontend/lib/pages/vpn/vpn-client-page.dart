@@ -27,6 +27,8 @@ import 'package:yiot_portal/pages/vpn/yiot-wg-remove-dialogue.dart';
 
 import 'package:yiot_portal/services/helpers.dart';
 
+import 'package:yiot_portal/controllers/yiot-vpn-client-controller.dart';
+
 import 'package:webviewx/webviewx.dart';
 
 // -----------------------------------------------------------------------------
@@ -64,9 +66,17 @@ class _VpnClientPageState extends State<VpnClientPage> {
               setState(() {
                 _disableWebView = true;
               });
-              await YIoTWgAddDialogue.show(context);
-              setState(() {
-                _disableWebView = false;
+              YIoTWgAddDialogue.show(context).then((file) {
+                if (file.size > 0 && file.data != null) {
+                  YIoTVpnClientController.apply(file.name, file.data!).then((success) {
+                    if (!success) {
+                      print(">>> Show Error message");
+                    }
+                  });
+                }
+                setState(() {
+                  _disableWebView = false;
+                });
               });
             },
           ),

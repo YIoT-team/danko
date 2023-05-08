@@ -26,14 +26,32 @@ class YIoTSession {
   static const _COOKIE_SESSION_TIME =
       "_luci_session_time_";
 
+  static const _COOKIE_LIVE_TIME_MS =
+      5 * 60 * 1000;
+
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future<bool> isActive() async {
     final SharedPreferences prefs = await _prefs;
 
-    // TODO: Check session timeout
+    // Check if cookie is present
+    if (prefs.getString(_COOKIE_SESSION) == null) {
+      return false;
+    }
 
-    return prefs.getString(_COOKIE_SESSION) != null;
+    // Get timestamp
+    final timestamp = prefs.getInt(_COOKIE_SESSION_TIME);
+    if (timestamp == null) {
+      return false;
+    }
+
+    // Check if timestamp is outdated
+    final dt = DateTime.now().millisecondsSinceEpoch - timestamp;
+    if (dt > _COOKIE_LIVE_TIME_MS) {
+      return false;
+    }
+
+    return true;
   }
 
   Future<bool> login(String user, String password) async {
