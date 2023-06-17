@@ -56,7 +56,7 @@ function prepare() {
     _new_dir "${ARTEFACTS_DIR}"
     _new_dir "${BUILD_CACHE_DIR}"
 
-    cp -f "${CONFIG_FOLDER}"/* "${BUILD_CACHE_DIR}"
+    cp -rf "${CONFIG_FOLDER}"/* "${BUILD_CACHE_DIR}"
 
     _finish "${OP_NAME}"
 }
@@ -71,7 +71,7 @@ function build() {
 
     pushd "${BUILD_CACHE_DIR}"
 
-        kiwi-ng system build --description . --target "${BUILD_CACHE_DIR}"
+        kiwi-ng --type iso --profile Live system build --description . --target "${BUILD_CACHE_DIR}"
     
     popd
 

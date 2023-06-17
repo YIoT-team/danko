@@ -11,16 +11,22 @@ test -f /.profile && . /.profile
 echo "Configure image: [$kiwi_iname]..."
 
 #======================================
-# Setup default target, multi-user
+# Set installation script as a shell for a root user
 #--------------------------------------
-# systemctl set-default multi-user.target
+usermod --shell /root/danko-installer.sh root
 
 #======================================
-# Set up the user skeleton for root user
+# Enable autologin
 #--------------------------------------
-# cp -a /etc/skel/* /root/
+sed -i 's|ExecStart=.*|ExecStart=-/sbin/agetty --noclear -a root %I $TERM|g' /lib/systemd/system/getty@.service
 
 #======================================
-# Force localhost for hostname
+# Activate services
 #--------------------------------------
-echo "localhost" > /etc/hostname
+baseInsertService dbus-broker
+baseInsertService NetworkManager
+
+#======================================
+# Setup default target, single-user
+#--------------------------------------
+baseSetRunlevel 1
