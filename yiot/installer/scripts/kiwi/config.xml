@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<image schemaversion="6.8" name="Live-ISO-U20.04-Appliance">
+    <description type="system">
+        <author>Neal Gompa</author>
+        <contact>ngompa@datto.com</contact>
+        <specification>Live ISO Appliance based on Ubuntu 20.04</specification>
+    </description>
+    <preferences>
+        <version>0.0.1</version>
+        <packagemanager>apt-get</packagemanager>
+        <locale>en_US</locale>
+        <keytable>us</keytable>
+        <timezone>utc</timezone>
+        <type image="iso" primary="true" kernelcmdline="net.ifnames=0" firmware="efi" flags="dmsquash"/>
+    </preferences>
+    <users>
+        <!-- root user pw: linux -->
+        <user password="$1$wYJUgpM5$RXMMeASDc035eX.NbYWFl0" home="/root" name="root" groups="root"/>
+    </users>
+    <repository type="apt-deb" distribution="focal-updates" components="main multiverse restricted universe" alias="u2004-updates" repository_gpgcheck="false">
+        <source path="http://archive.ubuntu.com/ubuntu"/>
+    </repository>
+    <repository type="apt-deb" distribution="focal" components="main multiverse restricted universe" alias="u2004-base" repository_gpgcheck="false">
+        <source path="http://archive.ubuntu.com/ubuntu"/>
+    </repository>
+    <packages type="image">
+        <package name="hdparm"/>
+        <package name="less"/>
+        <package name="lldpad"/>
+        <package name="vlan"/>
+        <package name="tcpdump"/>
+        <package name="curl"/>
+        <package name="vim"/>
+        <package name="pigz"/>
+        <package name="mdadm"/>
+        <package name="net-tools"/>
+        <package name="grub-efi-amd64"/>
+        <package name="dracut"/>
+        <package name="xz-utils"/>
+        <package name="binutils"/>
+        <package name="linux-generic"/>
+        <package name="isolinux"/>
+        <package name="syslinux"/>
+        <package name="syslinux-common"/>
+        <package name="init"/>
+        <package name="gnupg"/>
+        <package name="iproute2"/>
+        <package name="iptables"/>
+        <package name="iputils-ping"/>
+        <package name="ifupdown"/>
+        <package name="isc-dhcp-client"/>
+        <package name="netbase"/>
+        <package name="bsdmainutils"/>
+        <package name="dmsetup"/>
+        <package name="lvm2"/>
+        <package name="cryptsetup-bin"/>
+        <package name="coreutils"/>
+        <package name="locales"/>
+        <package name="lsof"/>
+        <package name="psmisc"/>
+        <package name="wget"/>
+        <package name="ca-certificates"/>
+        <package name="rsync"/>
+        <package name="e2fsprogs"/>
+        <package name="xfsprogs"/>
+        <package name="ethtool"/>
+        <package name="grep"/>
+        <package name="bc"/>
+        <package name="gawk"/>
+        <package name="pcregrep"/>
+    </packages>
+    <packages type="iso">
+        <package name="dracut-config-generic"/>
+        <package name="dracut-network"/>
+    </packages>
+    <packages type="bootstrap">
+        <package name="dracut"/>
+        <package name="linux-generic"/>
+        <package name="grub2"/>
+        <package name="usrmerge"/>
+    </packages>
+</image>
+
+<!-- <?xml version="1.0" encoding="utf-8"?>
+
+<image>
+  <name>YIoT</name>
+  <version>1.0</version>
+  <description type="system">
+        <author>Roman Kutashenko</author>
+        <contact>kutashenko@gmail.com</contact>
+        <specification>
+            YIoT Danko Installer
+        </specification>
+    </description>
+  <kernels>
+    <kernel default="true">vmlinuz</kernel>
+    <initrd>initrd</initrd>
+  </kernels>
+  <iso_bootable>true</iso_bootable>
+  <bootloader>
+    <type>grub2</type>
+    <install>true</install>
+    <configfile>boot/grub2/grub.cfg</configfile>
+    <efi>
+      <efi_boot_entry>
+        <auto_login>true</auto_login>
+        <username>root</username>
+        <password>root</password>
+      </efi_boot_entry>
+    </efi>
+  </bootloader>
+  <branding>
+    <product_name>YIoT Danko</product_name>
+    <vendor>YIoT</vendor>
+  </branding>
+  <filesystem>
+    <partitioning>
+      <disk device="/dev/sda">
+        <partitions>
+          <partition name="root" size="4G" filesystem="ext4" mount="/"/>
+        </partitions>
+      </disk>
+    </partitioning>
+  </filesystem>
+  <packages>
+    <package name="squashfs-tools"/>
+    <package name="genisoimage"/>
+    <package name="zip"/>
+    <package name="git"/>
+    <package name="syslinux-utils"/>
+    <package name="dialog"/>
+    <package name="parted"/>
+    <package name="systemd-container"/>
+    <package name="binwalk"/>
+    <package name="ethtool"/>
+    <package name="xorriso"/>
+  </packages>
+</image>
+ -->
