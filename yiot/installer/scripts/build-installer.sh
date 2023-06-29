@@ -25,10 +25,6 @@ readonly ARTEFACTS_DIR="${SCRIPT_FOLDER}/artefacts"
 readonly BUILD_CACHE_DIR="${SCRIPT_FOLDER}/tmp"
 readonly CONFIG_FOLDER="${SCRIPT_FOLDER}/kiwi"
 
-#   Files
-
-
-
 #   Params
 readonly YIOT_IMAGE="${1}"
 
@@ -47,16 +43,22 @@ function prepare() {
     local OP_NAME="Prapare"
     _start "${OP_NAME}"
 
-    # if [ ! -f "${YIOT_IMAGE}" ]; then
-    #     echo "ERROR: cannot find image file ${YIOT_IMAGE}"
-    #     echo "USAGE: ${0} <path to YIoT image>"
-    #     exit 1
-    # fi
+    # Check parameters
+    if [ ! -f "${YIOT_IMAGE}" ]; then
+        echo "ERROR: cannot find image file ${YIOT_IMAGE}"
+        echo "USAGE: ${0} <path to YIoT image>"
+        exit 1
+    fi
 
+    # Prepare folders
     _new_dir "${ARTEFACTS_DIR}"
     _new_dir "${BUILD_CACHE_DIR}"
 
+    # Copy data files
     cp -rf "${CONFIG_FOLDER}"/* "${BUILD_CACHE_DIR}"
+
+    # Copy YIoT Danko
+    cp -f "${YIOT_IMAGE}" "${BUILD_CACHE_DIR}/root/yiot.img.gz"
 
     _finish "${OP_NAME}"
 }

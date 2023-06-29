@@ -57,6 +57,7 @@
         <package name="dracut-live"/>
         <package name="dialog"/>
         <package name="ethtool"/>
+        <package name="gzip"/>
     </packages>
     <packages type="bootstrap">
         <package name="glibc-all-langpacks"/>

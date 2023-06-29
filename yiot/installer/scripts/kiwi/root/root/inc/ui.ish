@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #  ────────────────────────────────────────────────────────────
 #                     ╔╗  ╔╗ ╔══╗      ╔════╗
 #                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
@@ -19,69 +17,64 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
+# --------------------------------------------------------
+HEIGHT=15
+WIDTH=60
+CHOICE_HEIGHT=7
+TITLE=" YIoT Danko Installer "
+MENU_TOOL="whiptail"
 
-#
-#   Log helper
-#
-function _log() {
-    echo -e ${1}
+# --------------------------------------------------------
+ui_set_colors() {
+    export NEWT_COLORS='
+    root=white,black
+    border=black,lightgray
+    window=lightgray,lightgray
+    shadow=black,black
+    title=black,lightgray
+    button=black,cyan
+    actbutton=white,cyan
+    compactbutton=black,lightgray
+    checkbox=black,lightgray
+    actcheckbox=lightgray,cyan
+    entry=black,lightgray
+    disentry=gray,lightgray
+    label=black,lightgray
+    listbox=black,lightgray
+    actlistbox=black,cyan
+    sellistbox=lightgray,black
+    actsellistbox=lightgray,black
+    textbox=black,lightgray
+    acttextbox=black,cyan
+    emptyscale=,gray
+    fullscale=,cyan
+    helpline=white,black
+    roottext=lightgrey,black
+'
 }
 
-#
-#   Error handler
-#
-function err_trap() {
-    err_code=$?
-    # ${FUNCNAME[*]} : err_trap print_message main
-    # call from subfunction: lenght = 3
-    # ${FUNCNAME[*]} : err_trap  main
-    # call from main: lenght = 2
-    arr_shift=$((${#FUNCNAME[@]} - 2))
-    # if arr_shift eq 0. we need to ommit FUNCTION and ARGUMENTS
-    echo "##############################################################################"
-    echo "### SCRIPT ERROR AT $0, IN LINE ${BASH_LINENO[$arr_shift]}"
-    [ $arr_shift -ne 0 ] && echo "### BASH FUNCTION NAME: ${FUNCNAME[$arr_shift]}"
-    echo "### BASH COMMAND: ${BASH_COMMAND[*]}"
-    [ $arr_shift -ne 0 ] && echo "### COMMAND ARGUMENTS: $@"
-    echo "### ERRORCODE: $err_code"
-    echo "##############################################################################"
-    exit 127
+# --------------------------------------------------------
+ui_show_menu () {
+    OPTIONS=${1}
+    CHOICE=$(${MENU_TOOL} --nocancel \
+        --title "${TITLE}" \
+        --ok-button "Next" \
+        --menu "${MENU}" \
+        ${HEIGHT} ${WIDTH} ${CHOICE_HEIGHT} \
+        "${OPTIONS[@]}" \
+        3>&1 1>&2 2>&3 )
 }
 
-#
-#   Print title
-#
-function _title() {
-    _log "########################################################"
-    _log "# ${1}"
-    _log "########################################################"
+# --------------------------------------------------------
+ui_dialog () {
+    $MENU_TOOL --title "$TITLE" --clear --yesno "${1}" 7 60
+    CHOICE=$?
 }
 
-#
-#   Print Info about action start
-#
-function _start() {
-    _log ""
-    _title "START: ${1}"
+# --------------------------------------------------------
+ui_message () {
+    ${MENU_TOOL} --title "${TITLE}" --msgbox "${1}" 7 48
 }
 
-#
-#   Print Info about action final_menu
-#
-function _finish() {
-    _title "FINISH: ${1}"
-    _log ""
-}
 
-#
-#   Creat new folder
-#
-function _new_dir() {
-    _log "# Create: ${1}"
-    if [ -d "${1}" ]; then
-        rm -rf "${1}"
-    fi
-    mkdir -p "${1}"
-}
-
-# -----------------------------------------------------------------------------
+# --------------------------------------------------------

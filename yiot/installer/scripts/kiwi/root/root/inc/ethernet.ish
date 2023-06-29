@@ -1,0 +1,89 @@
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+#  ────────────────────────────────────────────────────────────
+
+# --------------------------------------------------------
+eth_lan_remove () {
+    for i in "${!LAN[@]}"; do
+        if [[ ${LAN[i]} = ${1} ]]; then
+            unset 'LAN[i]'
+        fi
+    done
+}
+
+# --------------------------------------------------------
+eth_lan_add () {
+    eth_lan_remove "${1}"
+    LAN+=("${1}")
+}
+
+# --------------------------------------------------------
+eth_enumerate() {
+    MAC_ADDRS=()
+    NIC_NAMES=()
+    for el in $(ip link | awk -F: '$0 !~ "lo|vir|wl|tun|dummy|^[^0-9]"{print $2;getline}'); do
+        local MAC_FILE="/sys/class/net/${el}/address"
+        if [ -f ${MAC_FILE} ]; then
+            local MAC=$(cat ${MAC_FILE})
+            MAC_ADDRS+=(${MAC})
+            NIC_NAMES+=(${el})
+        fi
+    done
+}
+
+# --------------------------------------------------------
+eth_identify_port() {
+    ethtool -p ${1} 5
+}
+
+# --------------------------------------------------------
+eth_get_mac () {
+    for i in "${!NIC_NAMES[@]}"; do
+        if [[ "${NIC_NAMES[$i]}" == "$1" ]]; then
+            echo "${MAC_ADDRS[$i]}";
+        fi
+    done
+}
+
+# --------------------------------------------------------
+eth_mode () {
+    local arr=("$@")
+    local N_EL=1
+    NIC_ARR=()
+
+    for i in "${arr[@]}";
+    do
+        local MAC_ADDR=$(eth_get_mac "$i")
+        if [[ "$MAC_ADDR" == "$WAN" ]]; then
+            local NIC_EL=$(printf "%-25s WAN\n"  "${i}")
+        else
+            local NIC_EL=$(printf "%-25s\n"  "${i}")
+            for lan in "${LAN[@]}"; do
+                if [ "$lan" == "$MAC_ADDR" ] ; then
+                    local NIC_EL=$(printf "%-25s LAN\n"  "${i}")
+                fi
+            done
+        fi
+                  
+        # NIC_ARR+=("${N_EL}")
+        NIC_ARR+=("${NIC_EL}")
+        N_EL=$((N_EL+1))
+    done
+}
+
+# --------------------------------------------------------
