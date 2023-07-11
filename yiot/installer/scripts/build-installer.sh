@@ -58,7 +58,16 @@ function prepare() {
     cp -rf "${CONFIG_FOLDER}"/* "${BUILD_CACHE_DIR}"
 
     # Copy YIoT Danko
-    cp -f "${YIOT_IMAGE}" "${BUILD_CACHE_DIR}/root/yiot.img.gz"
+    cp -f "${YIOT_IMAGE}" "${BUILD_CACHE_DIR}/root/root/yiot.img.gz"
+
+    # Unpack image
+    pushd "${BUILD_CACHE_DIR}/root/root"
+        gzip -d yiot.img.gz || true
+        if [ ! -f yiot.img ]; then
+            echo "ERROR: There is no decompressed image file"
+            exit -1
+        fi
+    popd
 
     _finish "${OP_NAME}"
 }
@@ -85,7 +94,7 @@ function build() {
 #   Save artefacts
 #
 function save_artefacts() {
-    local OP_NAME="Save Artevfacts"
+    local OP_NAME="Save Artefacts"
     _start "${OP_NAME}"
 
     pushd "${BUILD_CACHE_DIR}"

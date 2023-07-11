@@ -56,7 +56,7 @@ ui_set_colors() {
 # --------------------------------------------------------
 ui_show_menu () {
     OPTIONS=${1}
-    CHOICE=$(${MENU_TOOL} --nocancel \
+    CHOICE=$(${MENU_TOOL} --clear --nocancel \
         --title "${TITLE}" \
         --ok-button "Next" \
         --menu "${MENU}" \
@@ -67,13 +67,13 @@ ui_show_menu () {
 
 # --------------------------------------------------------
 ui_dialog () {
-    $MENU_TOOL --title "$TITLE" --clear --yesno "${1}" 7 60
+    $MENU_TOOL --clear --title "$TITLE" --clear --yesno "${1}" 7 60
     CHOICE=$?
 }
 
 # --------------------------------------------------------
 ui_message () {
-    ${MENU_TOOL} --title "${TITLE}" --msgbox "${1}" 7 48
+    ${MENU_TOOL} --clear --title "${TITLE}" --msgbox "${1}" 7 48
 }
 
 

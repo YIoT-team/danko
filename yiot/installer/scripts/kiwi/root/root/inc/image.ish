@@ -17,19 +17,18 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
+readonly PREPARED_IMAGE="/root/yiot.img"
+
 # --------------------------------------------------------
 image_repack () {
-    echo "Repack image ..."
+    echo "..."
 }
 
 # --------------------------------------------------------
 image_install () {
-    pushd "/home/vagrant"
-    echo "Please wait... Cleaning disk..."
-    dd if=/dev/zero of=${INSTALL_PATH} bs=4M count=1024 status=progress
 
     echo "Please wait... System image is being written to disk..."
-    dd bs=4k if=/tmp/danko-configured.img of=${INSTALL_PATH} conv=sync status=progress
+    dd bs=4k if="${PREPARED_IMAGE}" of=${INSTALL_PATH} conv=sync status=progress
 
     echo "Done!"
 }
