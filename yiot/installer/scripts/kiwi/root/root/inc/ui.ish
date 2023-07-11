@@ -1,0 +1,80 @@
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+#  ────────────────────────────────────────────────────────────
+
+# --------------------------------------------------------
+HEIGHT=15
+WIDTH=60
+CHOICE_HEIGHT=7
+TITLE=" YIoT Danko Installer "
+MENU_TOOL="whiptail"
+
+# --------------------------------------------------------
+ui_set_colors() {
+    export NEWT_COLORS='
+    root=white,black
+    border=black,lightgray
+    window=lightgray,lightgray
+    shadow=black,black
+    title=black,lightgray
+    button=black,cyan
+    actbutton=white,cyan
+    compactbutton=black,lightgray
+    checkbox=black,lightgray
+    actcheckbox=lightgray,cyan
+    entry=black,lightgray
+    disentry=gray,lightgray
+    label=black,lightgray
+    listbox=black,lightgray
+    actlistbox=black,cyan
+    sellistbox=lightgray,black
+    actsellistbox=lightgray,black
+    textbox=black,lightgray
+    acttextbox=black,cyan
+    emptyscale=,gray
+    fullscale=,cyan
+    helpline=white,black
+    roottext=lightgrey,black
+'
+}
+
+# --------------------------------------------------------
+ui_show_menu () {
+    OPTIONS=${1}
+    CHOICE=$(${MENU_TOOL} --clear --nocancel \
+        --title "${TITLE}" \
+        --ok-button "Next" \
+        --menu "${MENU}" \
+        ${HEIGHT} ${WIDTH} ${CHOICE_HEIGHT} \
+        "${OPTIONS[@]}" \
+        3>&1 1>&2 2>&3 )
+}
+
+# --------------------------------------------------------
+ui_dialog () {
+    $MENU_TOOL --clear --title "$TITLE" --clear --yesno "${1}" 7 60
+    CHOICE=$?
+}
+
+# --------------------------------------------------------
+ui_message () {
+    ${MENU_TOOL} --clear --title "${TITLE}" --msgbox "${1}" 7 48
+}
+
+
+# --------------------------------------------------------

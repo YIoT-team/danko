@@ -1,0 +1,60 @@
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+#  ────────────────────────────────────────────────────────────
+
+# --------------------------------------------------------
+
+MIN_DISK_SIZE="4"
+DISK_DEVICES=()
+DISK_NAMES=()
+DISK_SIZES=()
+DISK_ARR=()
+
+
+# --------------------------------------------------------
+drive_enumerate() {
+    DISK_DEVICES=()
+    DISK_NAMES=()
+    DISK_SIZES=()
+    DISK_ARR=()
+    
+    local N_EL=1
+    for i in $(ls -1 /dev/sd?); do
+        local DISKS_FILE="/tmp/disks.dat"
+        parted --script ${i} print > ${DISKS_FILE} 2>/dev/null
+        if grep -q "Disk /dev" ${DISKS_FILE}; then
+            local BLOCKDEV=$(echo ${i}|cut -d "/" -f 3)
+            local NAME=$(cat ${DISKS_FILE} | grep Model | sed -e 's/Model: //g' | awk -F "(" '{print $1}')
+            local SZ=$((`cat /sys/block/$BLOCKDEV/size`*512/1024/1024))
+            if [ $SZ -gt $((MIN_DISK_SIZE*1024)) ]; then
+                DISK_DEVICES+=(${i})
+                DISK_NAMES+=(${NAME})
+                DISK_SIZES+=(${SZ})
+
+                local UI_STR=$(printf "%-26.26s %-5.5s %s\n"  "${NAME}" "${SZ}" "MB")
+
+                #DISK_ARR+=("${N_EL}")
+                DISK_ARR+=("${UI_STR}")
+
+                N_EL=$((N_EL+1))
+            fi
+        fi
+    done
+}
+
+# --------------------------------------------------------
