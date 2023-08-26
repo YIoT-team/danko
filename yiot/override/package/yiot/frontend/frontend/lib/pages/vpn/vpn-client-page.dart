@@ -17,10 +17,12 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
+import 'dart:html' as html;
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:yiot_portal/components/ui/yiot-title.dart';
 import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
+import 'package:yiot_portal/components/ui/yiot-secondary-button.dart';
 import 'package:yiot_portal/components/ui/yiot-settings-element.dart';
 import 'package:yiot_portal/components/ui/yiot-link-button.dart';
 import 'package:yiot_portal/components/ui/yiot-progress-dialog.dart';
@@ -30,6 +32,8 @@ import 'package:yiot_portal/pages/vpn/yiot-wg-remove-dialogue.dart';
 
 import 'package:yiot_portal/controllers/yiot-vpn-client-controller.dart';
 import 'package:yiot_portal/model/wireguard-status-model.dart';
+
+import 'package:yiot_portal/services/helpers.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
@@ -81,6 +85,7 @@ class _VpnClientPageState extends State<VpnClientPage> {
         children: [
           YIoTPrimaryButton(
             text: "Add",
+            width: 250,
             onPressed: () async {
               YIoTWgAddDialogue.show(context).then((file) {
                 if (file.size > 0 && file.data != null) {
@@ -96,6 +101,14 @@ class _VpnClientPageState extends State<VpnClientPage> {
                   });
                 }
               });
+            },
+          ),
+          SizedBox(width: 50),
+          YIoTSecondaryButton(
+            text: "Create VPN Server in the Cloud",
+            width: 250,
+            onPressed: () async {
+              html.window.open(YIoTServiceHelpers.wgAddHelpURL(), "wg-add-help");
             },
           ),
         ],

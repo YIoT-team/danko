@@ -53,7 +53,7 @@ class YIoTServiceHelpers {
   //
   //  Danko documentation
   //
-  static String wgAddHelpURL() => "https://docs.yiot.dev/docs/cv2se-faq#add-wireguard-connection";
+  static String wgAddHelpURL() => "https://docs.yiot.dev/docs/services#vpn-server-quick-start";
 }
 
 // -----------------------------------------------------------------------------
