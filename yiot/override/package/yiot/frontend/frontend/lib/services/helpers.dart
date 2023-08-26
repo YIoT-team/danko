@@ -27,7 +27,7 @@ class YIoTServiceHelpers {
   //
   static String baseURL() {
     if (!kReleaseMode) {
-      return "http://192.168.0.251";
+      return "http://192.168.8.115";
     }
     return window.location.origin;
   }

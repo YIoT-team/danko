@@ -26,28 +26,14 @@ import 'package:yiot_portal/components/ui/yiot-dropdown.dart';
 // -----------------------------------------------------------------------------
 
 class YIoTWgRemoveDialogue {
-  static Future<String> show(BuildContext context) async {
-    var _type = "";
+  static Future<bool> show(BuildContext context) async {
+    var _remove = false;
 
     await Alert(
         context: context,
         title: "Remove WireGuard connection",
         content: Column(
           children: <Widget>[
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 350,
-              child: YIoTDropDown(
-                items: [
-                  'wg0',
-                  'local-wg',
-                  'yiot-cloud'
-                ],
-                onChanged: (index) {
-                  print(">>> remove WireGuard connection: ${index}");
-                },
-              ),
-            ),
           ],
         ),
         buttons: [
@@ -56,6 +42,7 @@ class YIoTWgRemoveDialogue {
             title: "Ok",
             color: Colors.redAccent,
             onPressed: () {
+              _remove = true;
               Navigator.pop(context);
             },
           ),
@@ -67,7 +54,7 @@ class YIoTWgRemoveDialogue {
             },
           ),
         ]).show();
-    return _type;
+    return _remove;
   }
 }
 

@@ -42,7 +42,10 @@ enum LuciCommand {
 
   // File System
   fsLoad("readfile"),
-  fsSave("writefile");
+  fsSave("writefile"),
+
+  // Status
+  statusCall("call");
 
   final String val;
   const LuciCommand(this.val);
@@ -119,6 +122,53 @@ class LuciService {
 
   // ---------------------------------------------------------------------------
   //
+  //  General RPC Luci call v2
+  //
+  static Future<LuciResponse> _ubusRequest(String token, String endpoint, LuciCommand command, List<dynamic> params) async {
+    final id = 1;
+
+    // Prepare URL
+    Uri url = Uri.parse(YIoTServiceHelpers.baseURL() + endpoint);
+
+    // Prepare Body
+    var fullParams = <dynamic>[token];
+    fullParams.addAll(params);
+    var body = json.encode([{"jsonrpc":"2.0", 'id': id, 'method': command.val, 'params': fullParams}]);
+
+    // RPC processing
+    final response = await http.post(url, body: body);
+
+    // Check response
+    if (response.statusCode != 200) {
+      return LuciResponse(
+        data: "",
+        error: "Cannot process Luci RPC ${endpoint}, command: ${command}",
+      );
+    }
+
+    // Parse JSON response
+    final responseJson = json.decode(response.body)[0];
+    String data = "";
+    String error;
+
+    if (responseJson ['result'] != null) {
+      data = json.encode(responseJson['result']);
+    }
+
+    if (responseJson['error'] == null) {
+      error = "";
+    } else {
+      error = responseJson['error'].toString();
+    }
+
+    return LuciResponse(
+      data: data,
+      error: error,
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  //
   //  Luci login
   //
   static Future<LuciResponse> login(String user, String password) async {
@@ -140,6 +190,14 @@ class LuciService {
   //
   static String urlWithToken(String url, String token) {
     return url + "?auth=" + token;
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //  UBUS URL
+  //
+  static String urlUbus() {
+    return "/ubus/?" + DateTime.now().millisecondsSinceEpoch.toString();
   }
 
   // ---------------------------------------------------------------------------
@@ -293,6 +351,15 @@ class LuciService {
   static Future<LuciResponse> fsSave(String token, String file, String value) async {
     final url = urlWithToken(_ENDPOINT_FS, token);
     return _rpcRequest(url, LuciCommand.fsSave, [file, value]);
+  }
+
+  // ---------------------------------------------------------------------------
+  //
+  //  Request WireGuard status
+  //
+  static Future<LuciResponse> getWireguard(String token) async {
+    final url = urlUbus();
+    return _ubusRequest(token, url, LuciCommand.statusCall, ["luci.wireguard", "getWgInstances", {}]);
   }
 }
 // -----------------------------------------------------------------------------
