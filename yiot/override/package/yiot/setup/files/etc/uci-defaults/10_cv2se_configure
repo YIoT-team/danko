@@ -1,12 +1,24 @@
 #!/bin/sh
 
-# DHCP Network
-uci del dhcp.lan.ra_slaac
-uci del network.lan.ipaddr
-uci del network.lan.netmask
-uci del network.lan.gateway
-uci del network.lan.ip6assign
-uci set network.lan.proto='dhcp'
+# WAN
+uci set network.wan.device='eth0'
+uci set network.wan6.device='eth0'
+
+# LAN
+network.lan.proto='static'
+network.lan.ipaddr='10.0.100.1'
+network.lan.netmask='255.255.255.0'
+
+# WiFi
+uci set wireless.radio0.htmode='HT20'
+uci set wireless.radio0.band='2g'
+uci set wireless.radio0.channel='auto'
+uci set wireless.radio0.cell_density='0'
+uci set wireless.default_radio0.ssid='Danko'
+uci set wireless.default_radio0.encryption='psk2'
+uci set wireless.default_radio0.key='yiotDanko'
+uci del wireless.default_radio0.disabled
+uci del wireless.radio0.disabled
 
 # Set Host Name
 uci set system.@system[0].hostname="danko"
