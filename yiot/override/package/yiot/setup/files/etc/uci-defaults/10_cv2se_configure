@@ -5,9 +5,11 @@ uci set network.wan.device='eth0'
 uci set network.wan6.device='eth0'
 
 # LAN
-network.lan.proto='static'
-network.lan.ipaddr='10.0.100.1'
-network.lan.netmask='255.255.255.0'
+uci set network.lan.proto='static'
+uci set network.lan.ipaddr='10.0.100.1'
+uci set network.lan.netmask='255.255.255.0'
+uci del network.@device[0].ports
+uci add_list network.@device[0].ports='eth1'
 
 # WiFi
 uci set wireless.radio0.htmode='HT20'
