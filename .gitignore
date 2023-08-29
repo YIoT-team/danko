@@ -12,6 +12,7 @@ ci/docker/flutter_linux_3.3.10-stable.tar.xz
 .go_work
 pubspec.lock
 *.o
+*.tar
 
 yiot/override/feeds/luci/modules/luci-base/src/jsmin
 yiot/override/feeds/luci/modules/luci-base/src/contrib/lemon
