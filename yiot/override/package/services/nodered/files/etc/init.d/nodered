@@ -21,11 +21,17 @@
 
 DOCKER_BIN="/usr/bin/docker"
 DOCKER_CONTAINER_NAME="NodeRed"
+DOCKER_IMAGE="$(cat /images/nodered)"
 
 START=99
 USE_PROCD=1
 
 start_service() {
+    #
+    #   Prepare config
+    #
+    config_load nodered
+
     #
     #   Check if we have start NodeRed
     #
@@ -40,12 +46,17 @@ start_service() {
     config_get data_path params data_path
     if [ ! -f "${data_path}" ]; then
         mkdir -p "${data_path}"
+        chown -R 1000:1000 "${data_path}"
     fi
 
     #
     #   Load image if not present
     #
-    # TODO
+    #
+    LOADED_VERSION="$(${DOCKER_BIN} image list | grep 7 | tail -1 | awk '{print $1 ":" $2}')"
+    if [ "${LOADED_VERSION}" != "${DOCKER_IMAGE}" ]; then
+        cat "/images/nodered.tar" | ${DOCKER_BIN} load 
+    fi
 
     #
     #   Parameters
@@ -64,7 +75,9 @@ start_service() {
     procd_set_param command "${DOCKER_BIN}" run --rm --name "${DOCKER_CONTAINER_NAME}" \
         --privileged \
         ${NETWORK_TYPE} \
-        -v "${data_path}":/data
+        -v "${data_path}":/data \
+        ${DOCKER_IMAGE}
+
 
     procd_close_instance
 }
