@@ -29,7 +29,7 @@ start_service() {
     #
     #   Check if we have start NodeRed
     #
-    config_get activate main activate
+    config_get activate params activate
     if [ "${activate}" != "1" ]; then
         exit 0
     fi
@@ -37,15 +37,20 @@ start_service() {
     #
     #   Prepare data folder
     #
-    config_get data_path main data_path
+    config_get data_path params data_path
     if [ ! -f "${data_path}" ]; then
         mkdir -p "${data_path}"
     fi
 
     #
+    #   Load image if not present
+    #
+    # TODO
+
+    #
     #   Parameters
     #
-    config_get host_network main host_network
+    config_get host_network params host_network
     if [ "${host_network}" == "1" ]; then
         NETWORK_TYPE="--network host"
     fi
@@ -56,7 +61,7 @@ start_service() {
     echo "Starting NodeRed"
     procd_open_instance
     procd_set_param respawn
-    procd_set_param command "${DOCKER_BIN}" docker run --rm --name "${DOCKER_CONTAINER_NAME}" \
+    procd_set_param command "${DOCKER_BIN}" run --rm --name "${DOCKER_CONTAINER_NAME}" \
         --privileged \
         ${NETWORK_TYPE} \
         -v "${data_path}":/data
