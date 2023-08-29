@@ -290,6 +290,14 @@ do_shell() {
 do_build() {
   NEED_RESTART="false"
 
+  _h1 "Prepare Offline Docker images"
+  SERVICE_DIR="${SCRIPT_PATH}/../../yiot/override/package/services"
+  NODERED_IMAGE_GETTER="${SERVICE_DIR}/nodered/scripts/get-image.sh"
+  if [ "${PARAM_CPU}" == "raspberry-pi" ]; then
+    IMAGE_TYPE="RPi4"
+  fi
+  "${NODERED_IMAGE_GETTER}" "${IMAGE_TYPE}"
+
   _h1 "Building OpenWRT"
   docker_run
   if [ "${?}" != "0" ]; then

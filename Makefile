@@ -20,22 +20,22 @@
 all: build
 
 build:
-	./ci/scripts/build-cv2se.sh build
+	./ci/scripts/build-danko.sh build
 
 build_rpi:
-	./ci/scripts/build-cv2se.sh build -q raspberry-pi
+	./ci/scripts/build-danko.sh build -q raspberry-pi
 
 rebuild:
-	./ci/scripts/build-cv2se.sh rebuild
+	./ci/scripts/build-danko.sh rebuild
 
 rebuild_rpi:
-	./ci/scripts/build-cv2se.sh rebuild -q raspberry-pi
+	./ci/scripts/build-danko.sh rebuild -q raspberry-pi
 
 shell:
-	./ci/scripts/build-cv2se.sh shell
+	./ci/scripts/build-danko.sh shell
 
 shell_rpi:
-	./ci/scripts/build-cv2se.sh shell -q raspberry-pi
+	./ci/scripts/build-danko.sh shell -q raspberry-pi
 
 umount:
 	./ci/scripts/umount-codebase.sh

@@ -19,7 +19,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=yiot-nat-helpers
+PKG_NAME:=nodered
 PKG_VERSION:=0.0.1
 PKG_RELEASE:=$(SUBTARGET)
 
@@ -31,13 +31,13 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
   SECTION:=yiot
-  CATEGORY:=YIoT Applications
-  TITLE:=YIoT NAT Helpers
+  CATEGORY:=YIoT Services
+  TITLE:=YIoT NodeRed in Docker
   MAINTAINER:=Roman Kutashenko <kutashenko@gmail.com>
 endef
 
 define Package/$(PKG_NAME)/description
-  YIoT NAT Helpers
+  YIoT NodeRed in Docker
 endef
 
 define Build/Prepare
