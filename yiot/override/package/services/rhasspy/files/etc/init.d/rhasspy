@@ -1,0 +1,84 @@
+#!/bin/sh /etc/rc.common
+#  ────────────────────────────────────────────────────────────
+#                     ╔╗  ╔╗ ╔══╗      ╔════╗
+#                     ║╚╗╔╝║ ╚╣╠╝      ║╔╗╔╗║
+#                     ╚╗╚╝╔╝  ║║  ╔══╗ ╚╝║║╚╝
+#                      ╚╗╔╝   ║║  ║╔╗║   ║║
+#                       ║║   ╔╣╠╗ ║╚╝║   ║║
+#                       ╚╝   ╚══╝ ╚══╝   ╚╝
+#    ╔╗╔═╗                    ╔╗                     ╔╗
+#    ║║║╔╝                   ╔╝╚╗                    ║║
+#    ║╚╝╝  ╔══╗ ╔══╗ ╔══╗  ╔╗╚╗╔╝  ╔══╗ ╔╗ ╔╗╔╗ ╔══╗ ║║  ╔══╗
+#    ║╔╗║  ║║═╣ ║║═╣ ║╔╗║  ╠╣ ║║   ║ ═╣ ╠╣ ║╚╝║ ║╔╗║ ║║  ║║═╣
+#    ║║║╚╗ ║║═╣ ║║═╣ ║╚╝║  ║║ ║╚╗  ╠═ ║ ║║ ║║║║ ║╚╝║ ║╚╗ ║║═╣
+#    ╚╝╚═╝ ╚══╝ ╚══╝ ║╔═╝  ╚╝ ╚═╝  ╚══╝ ╚╝ ╚╩╩╝ ║╔═╝ ╚═╝ ╚══╝
+#                    ║║                         ║║
+#                    ╚╝                         ╚╝
+#
+#    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
+#  ────────────────────────────────────────────────────────────
+
+DOCKER_BIN="/usr/bin/docker"
+DOCKER_CONTAINER_NAME="Rhasspy"
+DOCKER_IMAGE="$(cat /images/rhasspy)"
+
+START=99
+USE_PROCD=1
+
+start_service() {
+    #
+    #   Prepare config
+    #
+    config_load rhasspy
+
+    #
+    #   Check if we have start Rhasspy
+    #
+    config_get activate params activate
+    if [ "${activate}" != "1" ]; then
+        exit 0
+    fi
+
+    #
+    #   Prepare data folder
+    #
+    config_get data_path params data_path
+    if [ ! -f "${data_path}" ]; then
+        mkdir -p "${data_path}"
+        chown -R 1000:1000 "${data_path}"
+    fi
+
+    #
+    #   Load image if not present
+    #
+    #
+    LOADED_VERSION="$(${DOCKER_BIN} image list | grep 7 | tail -1 | awk '{print $1 ":" $2}')"
+    if [ "${LOADED_VERSION}" != "${DOCKER_IMAGE}" ]; then
+        cat "/images/rhasspy.tar" | ${DOCKER_BIN} load 
+    fi
+
+    #
+    #   Parameters
+    #
+    config_get host_network params host_network
+    if [ "${host_network}" == "1" ]; then
+        NETWORK_TYPE="--network host"
+    fi
+  
+    #
+    #   Create Procd instance
+    #
+    echo "Starting Rhasspy"
+    procd_open_instance
+    procd_set_param respawn
+    procd_set_param file /etc/config/rhasspy
+    procd_set_param pidfile /var/run/rhasspy.pid
+    procd_set_param command "${DOCKER_BIN}" run --rm --name "${DOCKER_CONTAINER_NAME}" \
+        --privileged \
+        ${NETWORK_TYPE} \
+        -v "${data_path}":/data \
+        ${DOCKER_IMAGE}
+
+
+    procd_close_instance
+}
