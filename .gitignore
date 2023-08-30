@@ -23,3 +23,5 @@ yiot/override/package/yiot/protocols-processor/src/.pkgdir
 yiot/override/package/yiot/protocols-processor/src/ipkg-*
 yiot/override/package/yiot/backend/src/ipkg-*
 yiot/override/package/yiot/backend/src/.pkgdir
+
+yiot/override/package/services/nodered/files/images/nodered
