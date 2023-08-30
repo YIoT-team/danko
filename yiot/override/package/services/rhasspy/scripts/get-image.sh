@@ -42,7 +42,6 @@ echo "-------------------------------------------------------"
 echo "- Pull Rhasspy ${TAG}"
 echo "-------------------------------------------------------"
 docker pull --platform ${PLATFORM} ${IMAGE}:${TAG}
-echo "${IMAGE}:${TAG}" > "${IMAGE_INFO_FILE}"
 
 echo "-------------------------------------------------------"
 echo "- Save Rhasspy image as a file"
@@ -50,4 +49,5 @@ echo "-------------------------------------------------------"
 if [ ! -d ${IMAGE_DIR} ]; then
     mkdir -p ${IMAGE_DIR}
 fi
+echo "${IMAGE}:${TAG}" > "${IMAGE_INFO_FILE}"
 docker save -o "${DST_FILE}" ${IMAGE}:${TAG}

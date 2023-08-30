@@ -61,6 +61,7 @@ start_service() {
     #   Parameters
     #
     config_get host_network params host_network
+    config_get lang params lang
     if [ "${host_network}" == "1" ]; then
         NETWORK_TYPE="--network host"
     fi
@@ -76,8 +77,11 @@ start_service() {
     procd_set_param command "${DOCKER_BIN}" run --rm --name "${DOCKER_CONTAINER_NAME}" \
         --privileged \
         ${NETWORK_TYPE} \
-        -v "${data_path}":/data \
-        ${DOCKER_IMAGE}
+        -v "/etc/localtime:/etc/localtime:ro" \
+        -v "${data_path}":/profiles \
+        ${DOCKER_IMAGE} \
+        --user-profiles /profiles \
+        --profile ${lang}
 
 
     procd_close_instance
