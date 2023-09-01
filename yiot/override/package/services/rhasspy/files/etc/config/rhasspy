@@ -1,5 +1,5 @@
 config main 'params'
-	option activate 1
+	option activate 0
 	option host_network 1
 	option lang 'en'
 	option data_path '/etc/docker/rhasspy'
