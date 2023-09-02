@@ -294,11 +294,15 @@ do_build() {
   SERVICE_DIR="${SCRIPT_PATH}/../../yiot/override/package/services"
   NODERED_IMAGE_GETTER="${SERVICE_DIR}/nodered/scripts/get-image.sh"
   RHASSPY_IMAGE_GETTER="${SERVICE_DIR}/rhasspy/scripts/get-image.sh"
+  MOSQUITTO_IMAGE_GETTER="${SERVICE_DIR}/mqtt/scripts/get-image-mosquitto.sh"
+  CEDALO_IMAGE_GETTER="${SERVICE_DIR}/mqtt/scripts/get-image-cedalo.sh"
   if [ "${PARAM_CPU}" == "raspberry-pi" ]; then
     IMAGE_TYPE="RPi4"
   fi
   "${NODERED_IMAGE_GETTER}" "${IMAGE_TYPE}"
   "${RHASSPY_IMAGE_GETTER}" "${IMAGE_TYPE}"
+  "${MOSQUITTO_IMAGE_GETTER}" "${IMAGE_TYPE}"
+  "${CEDALO_IMAGE_GETTER}" "${IMAGE_TYPE}"
 
   _h1 "Building OpenWRT"
   docker_run

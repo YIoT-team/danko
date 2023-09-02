@@ -77,7 +77,6 @@ start_service() {
     procd_set_param command "${DOCKER_BIN}" run --rm --name "${DOCKER_CONTAINER_NAME}" \
         --privileged \
         ${NETWORK_TYPE} \
-        -v "/etc/localtime:/etc/localtime:ro" \
         -v "${data_path}":/profiles \
         ${DOCKER_IMAGE} \
         --user-profiles /profiles \

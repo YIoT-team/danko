@@ -25,6 +25,7 @@ readonly DST_FILE="${IMAGE_DIR}/cedalo.tar"
 readonly IMAGE_INFO_FILE="${IMAGE_DIR}/cedalo"
 
 readonly IMAGE="cedalo/management-center"
+readonly YIOT_IMAGE="yiot/management-center"
 readonly TAG="dev"
 
 if [ "${1}" == "RPi4" ]; then
@@ -44,10 +45,24 @@ echo "-------------------------------------------------------"
 docker pull --platform ${PLATFORM} ${IMAGE}:${TAG}
 
 echo "-------------------------------------------------------"
+echo "- Repack image"
+echo "-------------------------------------------------------"
+rm -rf "${SCRIPT_PATH}/docker" || true
+mkdir "${SCRIPT_PATH}/docker"
+pushd "${SCRIPT_PATH}/docker"
+    echo "FROM ${IMAGE}:${TAG} as initial"                  >   Dockerfile
+    echo "FROM node:18-alpine"                              >>  Dockerfile
+    echo "COPY --from=initial / /"                          >>  Dockerfile
+    echo "EXPOSE 8088"                                      >>  Dockerfile
+    echo 'CMD [ "sh", "docker-entrypoint.sh" ]'             >>  Dockerfile
+    docker build -t "${YIOT_IMAGE}:${TAG}" .
+popd
+
+echo "-------------------------------------------------------"
 echo "- Save Cedalo image as a file"
 echo "-------------------------------------------------------"
 if [ ! -d ${IMAGE_DIR} ]; then
     mkdir -p ${IMAGE_DIR}
 fi
-echo "${IMAGE}:${TAG}" > "${IMAGE_INFO_FILE}"
-docker save -o "${DST_FILE}" ${IMAGE}:${TAG}
+echo "${YIOT_IMAGE}:${TAG}" > "${IMAGE_INFO_FILE}"
+docker save -o "${DST_FILE}" ${YIOT_IMAGE}:${TAG}
