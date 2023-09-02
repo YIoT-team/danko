@@ -19,28 +19,32 @@
 
 import 'package:flutter/material.dart';
 import 'package:yiot_portal/components/ui/yiot-title.dart';
-import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
 
 // -----------------------------------------------------------------------------
-class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+class VoiceControlPage extends StatefulWidget {
+  VoiceControlPage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _VoiceControlPageState createState() => _VoiceControlPageState();
 }
 
 // -----------------------------------------------------------------------------
-class _HomePageState extends State<HomePage> {
+class _VoiceControlPageState extends State<VoiceControlPage> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+
       // -----------------------------------------------------------------------
       //  Title
       //
-      YIoTTitle(title: 'Home'),
+      YIoTTitle(title: 'Voice Control'),
       Divider(
         color: Colors.black,
       ),
+      SizedBox(
+        height: 20,
+      ),
+
     ]);
   }
 }

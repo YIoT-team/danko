@@ -19,28 +19,32 @@
 
 import 'package:flutter/material.dart';
 import 'package:yiot_portal/components/ui/yiot-title.dart';
-import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
 
 // -----------------------------------------------------------------------------
-class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+class NodeRedPage extends StatefulWidget {
+  NodeRedPage({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _NodeRedPageState createState() => _NodeRedPageState();
 }
 
 // -----------------------------------------------------------------------------
-class _HomePageState extends State<HomePage> {
+class _NodeRedPageState extends State<NodeRedPage> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+
       // -----------------------------------------------------------------------
       //  Title
       //
-      YIoTTitle(title: 'Home'),
+      YIoTTitle(title: 'NodeRed'),
       Divider(
         color: Colors.black,
       ),
+      SizedBox(
+        height: 20,
+      ),
+
     ]);
   }
 }

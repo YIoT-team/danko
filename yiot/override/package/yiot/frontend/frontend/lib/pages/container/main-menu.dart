@@ -38,26 +38,73 @@ class MainMenu {
     //
     //  Data
     //
+    // AdminMenuItem(
+    //   title: 'Data Flow',
+    //   icon: Icons.account_tree_outlined,
+    //   route: '/data/flow',
+    // ),
+
+    //
+    //  WiFi
+    //
     AdminMenuItem(
-      title: 'Data Flow',
-      icon: Icons.account_tree_outlined,
-      route: '/data/flow',
+      title: 'WiFi',
+      icon: Icons.wifi,
+      route: '/hardware/wifi',
     ),
 
     //
-    //  VPN
+    //  Security
     //
     AdminMenuItem(
-      title: 'VPN',
-      icon: YIoTIcons.vpn_lock,
+      title: 'Security',
+      icon: Icons.security_outlined,
+      route: '/security',
+    ),
+
+    //
+    //  Devices
+    //
+    AdminMenuItem(
+      title: 'Devices',
+      icon: Icons.device_hub_outlined,
+      route: '/devices',
+    ),
+
+    //
+    //  Services
+    //
+    AdminMenuItem(
+      title: 'Services',
+      icon: Icons.dashboard,
       children: [
         AdminMenuItem(
-          title: 'Server',
+          title: 'NodeRed',
+          icon: Icons.account_tree_outlined,
+          route: '/nodered',
+        ),
+        AdminMenuItem(
+          title: 'MQTT',
+          icon: Icons.call_split,
+          route: '/mqtt',
+        ),
+        AdminMenuItem(
+          title: 'Voice control',
+          icon: Icons.settings_voice_outlined,
+          route: '/voice',
+        ),
+        AdminMenuItem(
+          title: 'SCADA',
+          icon: Icons.area_chart_sharp,
+          route: '/scada',
+        ),
+        AdminMenuItem(
+          title: 'VPN Server',
           icon: YIoTIcons.server,
           route: YIoTServiceHelpers.wgServerURL(),
         ),
         AdminMenuItem(
-          title: 'Client',
+          title: 'VPN Clients',
           icon: Icons.private_connectivity,
           route: '/vpn/client',
         ),
@@ -75,11 +122,6 @@ class MainMenu {
           title: 'Ethernet',
           icon: YIoTIcons.ethernet,
           route: '/hardware/ethernet',
-        ),
-        AdminMenuItem(
-          title: 'WiFi',
-          icon: Icons.wifi,
-          route: '/hardware/wifi',
         ),
         AdminMenuItem(
           title: 'Serial',
@@ -113,11 +155,13 @@ class MainMenu {
         ),
       ],
     ),
+
     AdminMenuItem(
       title: 'Advanced',
       icon: Icons.auto_awesome,
       route: YIoTServiceHelpers.luciURL(),
     ),
+
     AdminMenuItem(
       title: 'Logout',
       icon: Icons.logout,

@@ -27,8 +27,8 @@ import 'package:yiot_portal/components/ui/yiot-settings-element.dart';
 import 'package:yiot_portal/components/ui/yiot-link-button.dart';
 import 'package:yiot_portal/components/ui/yiot-progress-dialog.dart';
 
-import 'package:yiot_portal/pages/vpn/yiot-wg-add-dialogue.dart';
-import 'package:yiot_portal/pages/vpn/yiot-wg-remove-dialogue.dart';
+import 'package:yiot_portal/pages/services/vpn/yiot-wg-add-dialogue.dart';
+import 'package:yiot_portal/pages/services/vpn/yiot-wg-remove-dialogue.dart';
 
 import 'package:yiot_portal/controllers/yiot-vpn-client-controller.dart';
 import 'package:yiot_portal/model/wireguard-status-model.dart';
