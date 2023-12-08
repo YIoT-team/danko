@@ -17,28 +17,40 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-all: build
+include $(TOPDIR)/rules.mk
 
-build:
-	./ci/scripts/build-danko.sh build
+PKG_NAME:=mqtt
+PKG_VERSION:=0.0.1
+PKG_RELEASE:=$(SUBTARGET)
 
-build_rpi:
-	./ci/scripts/build-danko.sh build -q raspberry-pi
+USE_SOURCE_DIR:=$(shell pwd)/src
+PKG_LICENSE:=BSD-2
+PKG_LICENSE_FILES:=
 
-rebuild:
-	./ci/scripts/build-danko.sh rebuild
+include $(INCLUDE_DIR)/package.mk
 
-rebuild_rpi:
-	./ci/scripts/build-danko.sh rebuild -q raspberry-pi
+define Package/$(PKG_NAME)
+  SECTION:=yiot
+  CATEGORY:=YIoT Services
+  TITLE:=YIoT MQTT Brocker and Web UI
+  MAINTAINER:=Roman Kutashenko <kutashenko@gmail.com>
+endef
 
-shell:
-	./ci/scripts/build-danko.sh shell
+define Package/$(PKG_NAME)/description
+  YIoT MQTT Brocker and Web UI
+endef
 
-shell_rpi:
-	./ci/scripts/build-danko.sh shell -q raspberry-pi
+define Build/Prepare
+endef
 
-umount:
-	./ci/scripts/umount-codebase.sh
+define Build/Configure
+endef
 
-clean:
-	./ci/scripts/cleanup-codebase.sh
+define Build/Compile
+endef
+
+define Package/$(PKG_NAME)/install
+	$(CP) -L ./files/* $(1)/
+endef
+
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -17,40 +17,37 @@
 #    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 #  ────────────────────────────────────────────────────────────
 
-include $(TOPDIR)/rules.mk
+#!/bin/bash
 
-PKG_NAME:=yiot-nat-helpers
-PKG_VERSION:=0.0.1
-PKG_RELEASE:=$(SUBTARGET)
+readonly SCRIPT_PATH="$(cd $(dirname "$0") >/dev/null 2>&1 && pwd)"
+readonly IMAGE_DIR="${SCRIPT_PATH}/../files/images"
+readonly DST_FILE="${IMAGE_DIR}/mosquitto.tar"
+readonly IMAGE_INFO_FILE="${IMAGE_DIR}/mosquitto"
 
-USE_SOURCE_DIR:=$(shell pwd)/src
-PKG_LICENSE:=BSD-2
-PKG_LICENSE_FILES:=
+readonly IMAGE="eclipse-mosquitto"
+readonly TAG="2-openssl"
 
-include $(INCLUDE_DIR)/package.mk
+if [ "${1}" == "RPi4" ]; then
+    readonly PLATFORM="linux/arm64/v8"
+else
+    readonly PLATFORM="linux/amd64"
+fi
 
-define Package/$(PKG_NAME)
-  SECTION:=yiot
-  CATEGORY:=YIoT Applications
-  TITLE:=YIoT NAT Helpers
-  MAINTAINER:=Roman Kutashenko <kutashenko@gmail.com>
-endef
+echo "-------------------------------------------------------"
+echo "- Clean Mosquitto images"
+echo "-------------------------------------------------------"
+docker image rm ${IMAGE}:${TAG} || true
 
-define Package/$(PKG_NAME)/description
-  YIoT NAT Helpers
-endef
+echo "-------------------------------------------------------"
+echo "- Pull Mosquitto ${TAG}"
+echo "-------------------------------------------------------"
+docker pull --platform ${PLATFORM} ${IMAGE}:${TAG}
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-endef
-
-define Package/$(PKG_NAME)/install
-	$(CP) -L ./files/* $(1)/
-endef
-
-$(eval $(call BuildPackage,$(PKG_NAME)))
+echo "-------------------------------------------------------"
+echo "- Save Mosquitto image as a file"
+echo "-------------------------------------------------------"
+if [ ! -d ${IMAGE_DIR} ]; then
+    mkdir -p ${IMAGE_DIR}
+fi
+echo "${IMAGE}:${TAG}" > "${IMAGE_INFO_FILE}"
+docker save -o "${DST_FILE}" ${IMAGE}:${TAG}

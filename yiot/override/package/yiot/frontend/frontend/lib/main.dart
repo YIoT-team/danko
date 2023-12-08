@@ -35,10 +35,16 @@ import 'package:yiot_portal/pages/home-page.dart';
 
 import 'package:yiot_portal/pages/data/yiot-flow-page.dart';
 
-import 'package:yiot_portal/pages/vpn/vpn-server-page.dart';
-import 'package:yiot_portal/pages/vpn/vpn-client-page.dart';
+import 'package:yiot_portal/pages/services/vpn/vpn-server-page.dart';
+import 'package:yiot_portal/pages/services/vpn/vpn-client-page.dart';
+import 'package:yiot_portal/pages/services/nodered/nodered-page.dart';
+import 'package:yiot_portal/pages/services/mqtt/mqtt-page.dart';
+import 'package:yiot_portal/pages/services/voice-control/voice-controll-page.dart';
 
-import 'package:yiot_portal/pages/hardware/wifi-page.dart';
+import 'package:yiot_portal/pages/security/security-page.dart';
+import 'package:yiot_portal/pages/devices/devices-page.dart';
+
+import 'package:yiot_portal/pages/wifi/wifi-page.dart';
 import 'package:yiot_portal/pages/hardware/ethernet-page.dart';
 import 'package:yiot_portal/pages/hardware/serial-page.dart';
 
@@ -73,11 +79,11 @@ class _YIoTPortalState extends State<YIoTPortal> {
     // Login page
     _routes.register(LoginPage());
 
-    // Data
-    _routes.register(ContainerPage(
-      routeData: "/data/flow",
-      body: DataFlowPage(),
-    ));
+    // // Data
+    // _routes.register(ContainerPage(
+    //   routeData: "/data/flow",
+    //   body: DataFlowPage(),
+    // ));
 
     //
     //  VPN
@@ -89,6 +95,40 @@ class _YIoTPortalState extends State<YIoTPortal> {
     _routes.register(ContainerPage(
       routeData: "/vpn/client",
       body: VpnClientPage(),
+    ));
+
+    //
+    //  Security
+    //
+    _routes.register(ContainerPage(
+      routeData: "/security",
+      body: SecurityPage(),
+    ));
+
+    //
+    //  Devices
+    //
+    _routes.register(ContainerPage(
+      routeData: "/devices",
+      body: DevicesPage(),
+    ));
+
+    //
+    //  Services
+    //
+    _routes.register(ContainerPage(
+      routeData: "/mqtt",
+      body: MqttPage(),
+    ));
+
+    _routes.register(ContainerPage(
+      routeData: "/nodered",
+      body: NodeRedPage(),
+    ));
+
+    _routes.register(ContainerPage(
+      routeData: "/voice",
+      body: VoiceControlPage(),
     ));
 
     //

@@ -19,95 +19,32 @@
 
 import 'package:flutter/material.dart';
 import 'package:yiot_portal/components/ui/yiot-title.dart';
-import 'package:yiot_portal/components/ui/yiot-primary-button.dart';
-import 'package:yiot_portal/components/ui/yiot-secondary-button.dart';
-
-import 'package:yiot_portal/pages/vpn/yiot-wg-add-dialogue.dart';
-import 'package:yiot_portal/pages/vpn/yiot-wg-remove-dialogue.dart';
-
-import 'package:yiot_portal/services/helpers.dart';
-
-import 'package:yiot_portal/controllers/yiot-vpn-client-controller.dart';
-
-import 'package:webviewx/webviewx.dart';
 
 // -----------------------------------------------------------------------------
-class VpnClientPage extends StatefulWidget {
-  VpnClientPage({Key? key}) : super(key: key);
+class DevicesPage extends StatefulWidget {
+  DevicesPage({Key? key}) : super(key: key);
 
   @override
-  _VpnClientPageState createState() => _VpnClientPageState();
+  _DevicesPageState createState() => _DevicesPageState();
 }
 
 // -----------------------------------------------------------------------------
-class _VpnClientPageState extends State<VpnClientPage> {
-  bool _disableWebView = false;
-
+class _DevicesPageState extends State<DevicesPage> {
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
     return Column(children: [
+
       // -----------------------------------------------------------------------
       //  Title
       //
-      YIoTTitle(title: 'VPN Clients'),
+      YIoTTitle(title: 'Devices'),
       Divider(
         color: Colors.black,
       ),
       SizedBox(
-        height: 10,
+        height: 20,
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          YIoTPrimaryButton(
-            text: "Add",
-            onPressed: () async {
-              setState(() {
-                _disableWebView = true;
-              });
-              YIoTWgAddDialogue.show(context).then((file) {
-                if (file.size > 0 && file.data != null) {
-                  YIoTVpnClientController.apply(file.name, file.data!).then((success) {
-                    if (!success) {
-                      print(">>> Show Error message");
-                    }
-                  });
-                }
-                setState(() {
-                  _disableWebView = false;
-                });
-              });
-            },
-          ),
-          SizedBox(
-            width: 30,
-          ),
-          YIoTSecondaryButton(
-            text: "Remove",
-            onPressed: () async {
-              setState(() {
-                _disableWebView = true;
-              });
-              await YIoTWgRemoveDialogue.show(context);
-              setState(() {
-                _disableWebView = false;
-              });
-            },
-          ),
-        ],
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      // Add WebView component
-      WebViewX(
-        ignoreAllGestures: !_disableWebView,
-        width: 1024,
-        height: screenSize.height - 200,
-        initialContent: YIoTServiceHelpers.wgClientsURL(),
-        initialSourceType: SourceType.url,
-      ),
+
     ]);
   }
 }

@@ -18,56 +18,34 @@
 //  ────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-
-import 'package:yiot_portal/components/ui/yiot-dialog-button.dart';
-import 'package:yiot_portal/components/ui/yiot-dropdown.dart';
+import 'package:yiot_portal/components/ui/yiot-title.dart';
 
 // -----------------------------------------------------------------------------
+class VoiceControlPage extends StatefulWidget {
+  VoiceControlPage({Key? key}) : super(key: key);
 
-class YIoTWgRemoveDialogue {
-  static Future<String> show(BuildContext context) async {
-    var _type = "";
+  @override
+  _VoiceControlPageState createState() => _VoiceControlPageState();
+}
 
-    await Alert(
-        context: context,
-        title: "Remove WireGuard connection",
-        content: Column(
-          children: <Widget>[
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 350,
-              child: YIoTDropDown(
-                items: [
-                  'wg0',
-                  'local-wg',
-                  'yiot-cloud'
-                ],
-                onChanged: (index) {
-                  print(">>> remove WireGuard connection: ${index}");
-                },
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          YIoTDialogButton(
-            context: context,
-            title: "Ok",
-            color: Colors.redAccent,
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          YIoTDialogButton(
-            context: context,
-            title: "Cancel",
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ]).show();
-    return _type;
+// -----------------------------------------------------------------------------
+class _VoiceControlPageState extends State<VoiceControlPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+
+      // -----------------------------------------------------------------------
+      //  Title
+      //
+      YIoTTitle(title: 'Voice Control'),
+      Divider(
+        color: Colors.black,
+      ),
+      SizedBox(
+        height: 20,
+      ),
+
+    ]);
   }
 }
 

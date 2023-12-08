@@ -31,8 +31,6 @@ class HomePage extends StatefulWidget {
 
 // -----------------------------------------------------------------------------
 class _HomePageState extends State<HomePage> {
-  bool _needInitialization = true;
-
   @override
   Widget build(BuildContext context) {
     return Column(children: [
@@ -42,12 +40,6 @@ class _HomePageState extends State<HomePage> {
       YIoTTitle(title: 'Home'),
       Divider(
         color: Colors.black,
-      ),
-      Container(
-        alignment: Alignment.topCenter,
-        child: YIoTPrimaryButton(
-          text: 'Start provision',
-        ),
       ),
     ]);
   }

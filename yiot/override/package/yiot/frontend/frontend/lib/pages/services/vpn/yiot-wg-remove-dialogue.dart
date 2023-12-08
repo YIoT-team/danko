@@ -17,43 +17,45 @@
 //    Lead Maintainer: Roman Kutashenko <kutashenko@gmail.com>
 //  ────────────────────────────────────────────────────────────
 
-import 'dart:html';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
-class YIoTServiceHelpers {
-  // ---------------------------------------------------------------------------
-  //
-  //  Returns base URL
-  //
-  static String baseURL() {
-    if (!kReleaseMode) {
-      return "http://192.168.8.115";
-    }
-    return window.location.origin;
+import 'package:yiot_portal/components/ui/yiot-dialog-button.dart';
+import 'package:yiot_portal/components/ui/yiot-dropdown.dart';
+
+// -----------------------------------------------------------------------------
+
+class YIoTWgRemoveDialogue {
+  static Future<bool> show(BuildContext context) async {
+    var _remove = false;
+
+    await Alert(
+        context: context,
+        title: "Remove WireGuard connection",
+        content: Column(
+          children: <Widget>[
+          ],
+        ),
+        buttons: [
+          YIoTDialogButton(
+            context: context,
+            title: "Ok",
+            color: Colors.redAccent,
+            onPressed: () {
+              _remove = true;
+              Navigator.pop(context);
+            },
+          ),
+          YIoTDialogButton(
+            context: context,
+            title: "Cancel",
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ]).show();
+    return _remove;
   }
-
-  // ---------------------------------------------------------------------------
-  //
-  //  WireGuard server UI helpers
-  //
-  static String wgServerURL() => baseURL() + "/wireguard";
-
-  // ---------------------------------------------------------------------------
-  //
-  //  LUCI UI helpers
-  //
-  static String luciURL() => baseURL() + "/cgi-bin/luci";
-  static String ttyURL() => luciURL() + "/admin/services/ttyd";
-  static String rebootURL() => luciURL() + "/admin/system/reboot";
-  static String logsURL() => luciURL() + "/admin/status/logs";
-  static String serialURL() => luciURL() + "/admin/services/ser2net";
-  static String wgClientsURL() => luciURL() + "/admin/status/wireguard";
-
-  // ---------------------------------------------------------------------------
-  //
-  //  Danko documentation
-  //
-  static String wgAddHelpURL() => "https://docs.yiot.dev/docs/services#vpn-server-quick-start";
 }
 
 // -----------------------------------------------------------------------------

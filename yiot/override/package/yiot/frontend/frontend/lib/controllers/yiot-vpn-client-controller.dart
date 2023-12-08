@@ -20,17 +20,16 @@
 import 'dart:convert';
 
 import 'package:yiot_portal/model/yiot-vpn-client-model.dart';
+import 'package:yiot_portal/model/wireguard-status-model.dart';
 
 import 'package:yiot_portal/services/luci.dart';
 import 'package:yiot_portal/session/yiot-session.dart';
-
 
 // ---------------------------------------------------------------------------
 //
 //  YIoT VPN Client Controller
 //
 class YIoTVpnClientController {
-
   // ---------------------------------------------------------------------------
   //
   //  Get token
@@ -44,7 +43,6 @@ class YIoTVpnClientController {
   //  Apply VPN Client configuration
   //
   static Future<bool> apply(String name, List<int> data) async {
-
     // Prepare configuration string
     final config = utf8.decode(data);
 
@@ -76,17 +74,18 @@ class YIoTVpnClientController {
     // uci set network.wg_yiot.private_key='4ISDdAoJpDjvY+FvQXvtetDZecO7phF4jB9dVqjsnEY='
     // uci add_list network.wg_yiot.addresses='10.221.17.4/32'
 
-
     LuciResponse res;
 
     // Encode to base 64 and save flow file
-    res = await LuciService.uciSet(token, 'network.${vpn.interfaceName}', 'interface');
+    res = await LuciService.uciSet(
+        token, 'network.${vpn.interfaceName}', 'interface');
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.${vpn.interfaceName}.proto', vpn.protocol);
+    res = await LuciService.uciSet(
+        token, 'network.${vpn.interfaceName}.proto', vpn.protocol);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
@@ -98,62 +97,74 @@ class YIoTVpnClientController {
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].description', vpn.description);
+    res = await LuciService.uciSet(
+        token, 'network.@${vpn.networkName}[-1].description', vpn.description);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].public_key', vpn.publicKey);
+    res = await LuciService.uciSet(
+        token, 'network.@${vpn.networkName}[-1].public_key', vpn.publicKey);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].preshared_key', vpn.presharedKey);
+    res = await LuciService.uciSet(token,
+        'network.@${vpn.networkName}[-1].preshared_key', vpn.presharedKey);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].allowed_ips', vpn.allowedIPs);
+    res = await LuciService.uciSet(
+        token, 'network.@${vpn.networkName}[-1].allowed_ips', vpn.allowedIPs);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].route_allowed_ips', '1');
+    res = await LuciService.uciSet(
+        token, 'network.@${vpn.networkName}[-1].route_allowed_ips', '1');
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].persistent_keepalive', vpn.keepAliveInterval);
+    res = await LuciService.uciSet(
+        token,
+        'network.@${vpn.networkName}[-1].persistent_keepalive',
+        vpn.keepAliveInterval);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].endpoint_host', vpn.endpointHost);
+    res = await LuciService.uciSet(token,
+        'network.@${vpn.networkName}[-1].endpoint_host', vpn.endpointHost);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.@${vpn.networkName}[-1].endpoint_port', vpn.endpointPort);
+    res = await LuciService.uciSet(token,
+        'network.@${vpn.networkName}[-1].endpoint_port', vpn.endpointPort);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
-    res = await LuciService.uciSet(token, 'network.${vpn.interfaceName}.private_key', vpn.privateKey);
+    res = await LuciService.uciSet(
+        token, 'network.${vpn.interfaceName}.private_key', vpn.privateKey);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
     }
 
     // uci add_list network.wg_yiot.addresses='10.221.17.4/32'
-    res = await LuciService.uciSet(token, 'network.${vpn.interfaceName}.addresses', vpn.addresses);
+    res = await LuciService.uciSet(
+        token, 'network.${vpn.interfaceName}.addresses', vpn.addresses);
     if (!res.error.isEmpty) {
       YIoTVpnClientController._dropChanges();
       return false;
@@ -174,9 +185,69 @@ class YIoTVpnClientController {
   //
   //  Drop UCI changes
   //
-  static void _dropChanges() {
+  static void _dropChanges() {}
 
+  // ---------------------------------------------------------------------------
+  //
+  //  Remove VPN Client
+  //
+  static Future<bool> remove(String name) async {
+    LuciResponse res;
+
+    // Get token
+    final token = await _token();
+
+    // network.@wireguard_wg_wq234[0]
+    // uci del network.wg_wq234
+
+    res = await LuciService.uciDel(token, 'network.@wireguard_${name}[0]');
+    if (!res.error.isEmpty) {
+      print("ERROR: del network.@wireguard_${name}[0]");
+    }
+
+    res = await LuciService.uciDel(token, 'network.${name}');
+    if (!res.error.isEmpty) {
+      print("ERROR: del network.${name}");
+    }
+
+    //
+    //  Commit changes
+    //
+    res = await LuciService.uciCommit(token, 'network');
+    if (!res.error.isEmpty) {
+      YIoTVpnClientController._dropChanges();
+      return false;
+    }
+
+    return true;
   }
 
+  // ---------------------------------------------------------------------------
+  //
+  //  Apply VPN Client configuration
+  //
+  static Future<List<WgStatusModel>> get() async {
+    var wgRes = <WgStatusModel>[];
+
+    // Get token
+    final token = await _token();
+
+    LuciResponse res;
+
+    // Request WireGuard status
+    res = await LuciService.getWireguard(token);
+    if (!res.error.isEmpty) {
+      return wgRes;
+    }
+
+    // Parse WireGuard status per each connection
+    final resultJson = json.decode(res.data)[1];
+    resultJson.keys.forEach((name) {
+      final info = resultJson[name];
+      wgRes.add(WgStatusModel.fromJson(info));
+    });
+
+    return wgRes;
+  }
 }
 // -----------------------------------------------------------------------------
